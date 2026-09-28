@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#04050c">
+<title>天机阁 · 命格英雄卡推演</title>
+<script defer src="/lunar.js"></script>
+<script defer src="/paipan.js"></script>
+<script>document.documentElement.className="js";</script>
+<style>
+/* ─────────────────────────────────────────────
+   天机阁 · 仪式玄境
+   圆角规则(全站唯一): 卡片 16 / 控件 12 / 标签与节点 药丸
+   强调色唯一: 暗金; 朱砂只做仪式装饰(印/符/已完成); 危险保持红
+   装饰层全部慢速低透明, prefers-reduced-motion 一律静止
+   ───────────────────────────────────────────── */
+:root{
+  --void:#030207; --deep:#0a0510; --ink:#150b16;
+  --fg:#F2EAD9; --dim:#BCAB8E; --faint:#A8977E;
+  --acc:#D8B36A; --gold:#E9C46A; --danger:#FF8F93;
+  --line:rgba(216,170,90,.16);
+  --line-hi:rgba(216,170,90,.36);
+  --r-card:16px; --r-ctl:12px; --r-pill:999px;
+  --serif:"Songti SC","STSong","Noto Serif CJK SC","Source Han Serif SC","SimSun",serif;
+  --sans:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC","Heiti SC",sans-serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box;margin:0;padding:0;scrollbar-color:rgba(216,170,90,.42) transparent;scrollbar-width:thin}
+::-webkit-scrollbar{width:10px;height:10px}
+::selection{background:rgba(196,69,58,.55);color:#fff}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(216,170,90,.32);border-radius:999px;border:2px solid transparent;background-clip:padding-box}
+::-webkit-scrollbar-thumb:hover{background:rgba(216,170,90,.5);background-clip:padding-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--void);
+  color:var(--fg);
+  font:16px/1.75 var(--sans);
+  color-scheme:dark;
+  min-height:100dvh;
+  overflow-x:hidden;
+  padding:0 16px 72px;
+}
+body:before{ /* 夜空底: 顶部一丝靛蓝,底部沉入纯黑 */
+  content:"";position:fixed;inset:0;z-index:-3;
+  background:
+    radial-gradient(120% 78% at 50% -10%, #2a1230 0%, rgba(42,18,48,0) 60%),
+    radial-gradient(78% 54% at 50% 36%, rgba(96,34,32,.17), transparent 72%),
+    linear-gradient(180deg,#0a0510 0%,#050309 55%,#020106 100%);
+}
+#sky{position:fixed;inset:0;width:100%;height:100%;z-index:-2;pointer-events:none}
+.neb{position:fixed;z-index:-2;width:70vmax;height:70vmax;pointer-events:none;opacity:.5;
+     transition:transform 1.4s var(--ease)}
+.n1{top:-24vmax;left:-16vmax;background:radial-gradient(circle,rgba(104,48,128,.28),rgba(104,48,128,0) 66%)}
+.n2{bottom:-30vmax;right:-18vmax;background:radial-gradient(circle,rgba(154,58,44,.18),rgba(154,58,44,0) 66%)}
+
+
+.wrap{max-width:680px;margin:0 auto;position:relative;z-index:61} /* 内容层: 高于烛光暗罩(60), 恒亮 */
+
+/* ── 头部 ───────────────────────────── */
+.hd{padding:clamp(30px,5.5vh,62px) 0 0;text-align:center}
+.hd:before{content:"窥 天 机 · 定 命 格";display:block;font-family:var(--serif);
+  font-size:12.5px;letter-spacing:.5em;text-indent:.5em;color:#E0654C;margin-bottom:15px;font-weight:600}
+h1{
+  color:#F5E2B4; /* 香槟金: 纯米白在暗罩下会读成银 */
+  font-family:var(--serif);
+  font-size:clamp(2.1rem,9.4vw,4.2rem);
+  line-height:1.1;
+  letter-spacing:.14em;
+  text-indent:.14em; /* 抵消末字后的字距,保持视觉居中 */
+  font-weight:700;
+  -webkit-text-stroke:.5px currentColor;
+  text-wrap:balance;
+  text-shadow:0 0 34px rgba(233,196,106,.22);
+  animation:breathe 5.5s ease-in-out infinite;
+}
+@keyframes breathe{0%,100%{text-shadow:0 0 34px rgba(233,196,106,.22)}
+  50%{text-shadow:0 0 44px rgba(233,196,106,.4),0 0 14px rgba(196,69,58,.2)}}
+h1 span{display:inline-block;opacity:0;transform:translateY(.42em);
+        text-shadow:0 0 0 rgba(233,196,106,0)}
+.js h1 span{animation:glyph .9s var(--ease) forwards;animation-delay:calc(var(--i)*.11s + .18s)}
+@media(max-width:340px){h1{letter-spacing:.08em;text-indent:.08em}}
+@keyframes glyph{
+  0%{opacity:0;transform:translateY(.42em);text-shadow:0 0 18px rgba(233,196,106,0)}
+  60%{opacity:1;text-shadow:0 0 26px rgba(233,196,106,.6)}
+  100%{opacity:1;transform:none;text-shadow:0 0 34px rgba(196,69,58,.22)}
+}
+.hd h1::after{content:"";display:block;width:236px;height:3px;margin:12px auto 0;
+  background:linear-gradient(90deg,transparent,rgba(233,196,106,.95),rgba(226,96,70,1) 50%,rgba(233,196,106,.95),transparent);
+  box-shadow:0 0 10px rgba(233,196,106,.4);
+  transform:scaleX(0);transform-origin:center;
+}
+.js h1:after{animation:rule 1.1s var(--ease) 1s forwards}
+@keyframes rule{to{transform:scaleX(1)}}
+.hd .sub{color:#E4DAC4;font-size:clamp(14px,1.6vw,16.5px);margin-top:10px;letter-spacing:.04em;text-wrap:balance}
+
+/* ── 进度 ───────────────────────────── */
+.steps{display:flex;list-style:none;margin:clamp(24px,4.5vh,36px) 0 0;padding:0;position:relative}
+.steps li{flex:1;position:relative;text-align:center}
+.steps li:before{ /* 连线: 本节点中心 → 下一节点中心 */
+  content:"";position:absolute;top:15px;left:50%;width:100%;height:1px;z-index:0;
+  background:linear-gradient(90deg,rgba(216,170,90,.42),rgba(216,170,90,.12));transform:scaleX(0);transform-origin:left;
+  transition:transform .6s var(--ease),background .4s
+}
+.steps li:last-child:before{display:none}
+.js .steps li:before{transform:scaleX(1);transition-delay:calc(.5s + var(--i)*.1s)}
+.steps li.on:before,.steps li.lit:before{background:linear-gradient(90deg,rgba(233,196,106,.8),rgba(196,69,58,.6))}
+.steps button{position:relative;z-index:1;width:100%;background:none;border:0;color:var(--dim);
+  font:inherit;font-size:13px;cursor:pointer;padding:0;display:flex;flex-direction:column;
+  align-items:center;gap:9px;transition:color .35s}
+.steps .dot{width:31px;height:31px;border-radius:var(--r-pill);border:1px solid rgba(216,170,90,.32);
+  background:rgba(12,7,4,.9);display:grid;place-items:center;font-size:13px;
+  transition:border-color .35s,background .35s,color .35s,box-shadow .5s,transform .35s var(--ease)}
+.steps li.on button{color:var(--fg)}
+.steps li.on .dot{border-color:var(--gold);color:var(--gold);box-shadow:0 0 0 4px rgba(233,196,106,.12),0 0 22px rgba(233,196,106,.42);transform:scale(1.08)}
+.steps li.lit button{color:rgba(210,132,110,.92)}
+.steps li.lit .dot{border-color:rgba(216,110,80,.9);color:#E8A183;background:rgba(196,69,58,.2)}
+.steps button:hover .dot{border-color:var(--line-hi);color:var(--fg)}
+.steps .txt{letter-spacing:.08em;white-space:nowrap}
+
+/* ── 舞台(四步叠放) ─────────────────── */
+#stage{position:relative;display:grid;align-items:start;overflow:hidden;
+       margin-top:clamp(12px,2.4vh,22px);transition:height .5s var(--ease)}
+.panel{grid-area:1/1;opacity:0;visibility:hidden;pointer-events:none;
+  transform:translateY(30px) scale(.985);filter:blur(10px);
+  transition:opacity .45s ease,transform .55s var(--ease),filter .45s ease,visibility 0s .5s}
+.panel.on{opacity:1;visibility:visible;pointer-events:auto;transform:none;filter:none;
+  transition:opacity .5s ease .1s,transform .6s var(--ease) .1s,filter .5s ease .1s,visibility 0s}
+.panel.out-up{transform:translateY(-26px) scale(.99);filter:blur(8px)}
+.panel.out-dn{transform:translateY(34px) scale(.99);filter:blur(8px)}
+
+/* ── 玉牌 ───────────────────────────── */
+.card{position:relative;background:linear-gradient(180deg,rgba(34,20,12,.94),rgba(12,7,6,.96));
+  border:1px solid rgba(216,170,90,.2);border-radius:var(--r-card);padding:clamp(16px,3vw,24px);
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  box-shadow:0 0 0 3px rgba(4,2,6,.6),0 0 0 4.5px rgba(216,170,90,.3),
+  0 7px 15px -9px rgba(0,0,0,.9);
+  background-image:repeating-radial-gradient(circle at 50% 46%,rgba(216,170,90,.032) 0 1px,transparent 1px 26px),
+  linear-gradient(180deg,rgba(34,20,12,.965),rgba(12,7,6,.985))}
+.card:before,.card:after{content:"";position:absolute;width:20px;height:20px;
+  border:0 solid rgba(233,196,106,.55);pointer-events:none}
+.card:before{top:9px;left:9px;border-top-width:1.5px;border-left-width:1.5px;border-radius:4px 0 0}
+.card:after{bottom:9px;right:9px;border-bottom-width:1.5px;border-right-width:1.5px;border-radius:0 0 4px}
+.ptop{margin-bottom:6px}
+.pnum{display:inline-block;font-size:12.5px;letter-spacing:.2em;color:#F0CE8A;
+  border:1px solid rgba(196,69,58,.6);background:rgba(196,69,58,.18);
+padding:3px 12px;border-radius:var(--r-pill);margin-bottom:12px}
+h2{font-family:var(--serif);font-size:clamp(1.35rem,4.6vw,1.75rem);letter-spacing:.06em;
+   line-height:1.4;text-wrap:balance;outline:none}
+h2:before{content:"◈";color:#C95A4A;margin-right:.34em;font-size:.78em;vertical-align:.1em}
+.phint{color:var(--dim);font-size:14.5px;margin-top:7px;line-height:1.75;text-wrap:balance}
+.pbody{margin-top:16px}
+
+/* ── 字段 ───────────────────────────── */
+.lab{font-size:13.5px;color:#A99C80;margin:16px 0 7px;letter-spacing:.03em;display:flex;
+  align-items:center;gap:7px;flex-wrap:wrap}
+.lab:first-child{margin-top:0}
+.lab .hint{color:var(--faint);font-size:12.5px}
+.rec{background:rgba(233,196,106,.13);border:1px solid rgba(233,196,106,.55);
+color:var(--gold);font-size:10px;line-height:1.2;padding:2px 5px;border-radius:var(--r-pill);
+font-weight:600;letter-spacing:.03em;font-style:normal;
+position:absolute;top:4px;right:6px;z-index:3}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px 16px}
+@media(max-width:560px){.g2{grid-template-columns:1fr}}
+/* 极窄屏: 徽章退回行内, 避免压住选项文字 */
+@media(max-width:360px){.rec{position:static;display:inline-block;margin-left:6px;padding:1px 4px;font-size:9px;letter-spacing:0}}
+@media(max-width:400px){.row{flex-direction:column}.row input{min-width:0;width:100%}}
+input,select,button{font-family:inherit}
+input[type=text],input[type=date],input[type=time],input[type=email]{
+  background:rgba(16,9,5,.55);border:1px solid var(--line);color:var(--fg);
+  border-radius:var(--r-ctl);padding:12px 14px;font-size:16px;width:100%;
+  transition:border-color .25s,box-shadow .3s,background .25s}
+input[type=date],input[type=time]{flex:1;min-width:130px;width:auto}
+input::placeholder{color:#8f887a}
+input:hover{border-color:var(--line-hi)}
+input:focus,input:focus-visible{outline:none;border-color:var(--acc);
+  box-shadow:0 0 0 3px rgba(216,170,106,.18);background:rgba(24,14,6,.7)}
+input.bad{border-color:var(--danger);box-shadow:0 0 0 3px rgba(255,143,147,.16)}
+
+/* 分段控件: 滑块随选择推移 */
+.seg{position:relative;display:flex;border:1px solid var(--line);border-radius:var(--r-ctl);
+  overflow:hidden;background:rgba(14,8,4,.55);min-width:170px}
+.seg .ink{position:absolute;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);z-index:0;
+  background:rgba(233,196,106,.14);border:1px solid rgba(233,196,106,.55);border-radius:9px;
+  transition:transform .42s var(--ease);pointer-events:none}
+.seg label{position:relative;z-index:1;flex:1;text-align:center;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;min-height:44px}
+.seg label span{display:flex;flex-direction:row;align-items:center;justify-content:center;
+gap:0;min-height:44px;padding:8px 6px;font-size:14.5px;color:var(--dim);
+transition:color .3s;line-height:1.3;text-align:center}
+.seg input{position:absolute;inset:0;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;z-index:2}
+.seg input:checked+span{color:var(--fg);font-weight:600}
+.seg input:focus-visible+span{outline:2px solid var(--gold);outline-offset:-4px;border-radius:9px}
+.seg label:hover span{color:var(--fg)}
+
+.cityHint{margin:9px 0 0!important;font-size:13px!important;min-height:20px}
+.cityHint.ok{color:var(--gold)}
+.cityHint.no{color:var(--danger)}
+.counter{font-size:13.5px;line-height:1.65;color:var(--faint);margin-top:8px;transition:color .3s}
+.counter.ok{color:var(--gold)}
+.counter.no{color:var(--danger)}
+
+/* ── 导航 ───────────────────────────── */
+.nav{margin-top:12px}
+#err{color:var(--danger);font-size:14.5px;display:none;white-space:pre-wrap;margin-bottom:14px;
+  padding:11px 14px;border:1px solid rgba(255,143,147,.4);background:rgba(255,143,147,.08);
+  border-radius:var(--r-ctl);line-height:1.6}
+.nbtns{display:flex;gap:12px;justify-content:flex-end;align-items:center}
+@media(max-width:560px){.nbtns{flex-direction:column;gap:10px}
+  .nbtns .ghost,.nbtns .next{width:100%;text-align:center;padding:15px 22px}
+  .nav{position:sticky;bottom:0;z-index:40;margin-top:14px;padding:12px 0 14px;
+    background:linear-gradient(180deg,rgba(10,5,9,0),rgba(10,5,9,.95) 26%);
+    border-top:1px solid rgba(216,170,90,.14)}}
+.ghost{background:rgba(6,4,10,.72);border:1px solid var(--line);color:var(--dim);
+  border-radius:var(--r-ctl);padding:13px 22px;font-size:15.5px;cursor:pointer;
+  transition:border-color .25s,color .25s,transform .2s var(--ease)}
+.ghost:hover{border-color:var(--line-hi);color:var(--fg);transform:translateY(-1px)}
+.ghost:active{transform:translateY(0) scale(.985)}
+.ghost.hide{display:none}
+.next{position:relative;overflow:hidden;border:0;color:#140b04;font-weight:700;font-size:15.5px;
+  background:linear-gradient(100deg,#CFA857,#EFDCAC 50%,#CFA857);border-radius:var(--r-ctl);
+  padding:13px 26px;cursor:pointer;
+  box-shadow:0 0 26px -6px rgba(233,196,106,.5);
+  transition:transform .22s var(--ease),box-shadow .3s,filter .3s}
+.next:hover{transform:translateY(-2px);box-shadow:0 0 36px -6px rgba(233,196,106,.8)}
+.next:active{transform:translateY(0) scale(.985)}
+.next:disabled{opacity:.45;cursor:wait;transform:none;box-shadow:none}
+.next:after{content:"";position:absolute;top:0;bottom:0;width:44px;left:-60px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.6),transparent);
+  transform:skewX(-18deg)}
+.next:hover:after{animation:sweep .85s var(--ease)}
+@keyframes sweep{to{left:130%}}
+
+/* ── 主按钮 ─────────────────────────── */
+.go{position:relative;overflow:hidden;width:100%;border:0;color:#03060e;font-weight:700;
+  font-size:17px;background:linear-gradient(100deg,var(--gold),#FFE7AE 46%,var(--gold));
+  border-radius:var(--r-ctl);padding:16px;cursor:pointer;letter-spacing:.1em;
+  box-shadow:0 0 34px -8px rgba(233,196,106,.7);
+  animation:aura 3.6s ease-in-out infinite;
+  transition:transform .22s var(--ease),box-shadow .3s,filter .3s}
+@keyframes aura{0%,100%{box-shadow:0 0 34px -8px rgba(233,196,106,.7)}
+  50%{box-shadow:0 0 48px -6px rgba(233,196,106,1),0 0 14px rgba(196,69,58,.4)}}
+.go:hover{transform:translateY(-2px);box-shadow:0 0 46px -8px rgba(233,196,106,.95)}
+.go:active{transform:translateY(0) scale(.99)}
+.go:disabled{opacity:.5;cursor:wait;transform:none;box-shadow:none;filter:grayscale(.4)}
+.go:after{content:"";position:absolute;top:0;bottom:0;width:56px;left:-70px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);
+  transform:skewX(-18deg)}
+.go:hover:after{animation:sweep 1s var(--ease)}
+.load{display:none;color:var(--acc);margin-top:14px;font-size:14.5px;text-align:center;
+  letter-spacing:.06em}
+.load.on{display:block;animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
+#merr{color:var(--danger);font-size:14px;display:none;margin-top:12px;line-height:1.6}
+
+/* ── 完成态 ─────────────────────────── */
+#doneCard{display:none;margin-top:24px;text-align:center;
+  background:linear-gradient(180deg,rgba(196,69,58,.13),rgba(255,255,255,.02));
+  border-color:rgba(196,69,58,.45);padding:clamp(24px,5vw,36px)}
+.js #doneCard.show{animation:pop .8s var(--ease) both}
+@keyframes pop{0%{opacity:0;transform:translateY(26px) scale(.96);filter:blur(12px)}
+  100%{opacity:1;transform:none;filter:none}}
+.doneMark{width:60px;height:60px;margin:0 auto 18px;border-radius:var(--r-pill);
+  border:2px solid rgba(196,69,58,.85);display:grid;place-items:center;font-size:26px;
+  color:var(--gold);font-family:var(--serif);background:rgba(196,69,58,.14);
+  box-shadow:0 0 30px -6px rgba(196,69,58,.7)}
+.doneTxt{color:var(--dim);font-size:15.5px;line-height:2.05}
+.doneTxt b{color:var(--gold);font-weight:600;word-break:break-all}
+.doneTxt .strong{display:block;font-family:var(--serif);font-size:clamp(1.2rem,4vw,1.5rem);
+  color:var(--fg);letter-spacing:.08em;margin-bottom:12px}
+
+/* ── 页脚 ───────────────────────────── */
+.foot{color:#B7AF9A;font-size:13px;text-align:center;margin-top:14px;line-height:1.95;padding-bottom:36px;
+  text-shadow:0 0 14px rgba(2,1,4,.95),0 0 4px rgba(2,1,4,.9);
+  background:rgba(3,2,7,.92);border-top:1px solid rgba(216,170,90,.30);
+  border-radius:12px;padding:13px 16px 15px;
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.foot .sigil{color:var(--dim);letter-spacing:.3em;display:block;margin-bottom:4px;
+  font-family:var(--serif);font-size:13px}
+
+/* ── 入场(默认可见,仅在 JS 下隐藏) ──── */
+.js .rv{opacity:0;transform:translateY(22px)}
+.js .rv.in{opacity:1;transform:none;
+  transition:opacity .8s ease,transform .9s var(--ease)}
+
+/* ── 八卦罗盘机关: 六十四卦外环 + 先天八卦 + 干支刻度(表单嵌盘心) ── */
+.mech{position:fixed;top:50%;left:50%;width:min(96vmin,900px);height:min(96vmin,900px);
+  transform:translate(-50%,-50%) scale(.92);z-index:-2;pointer-events:none;opacity:0;
+  animation:mechIn 1.5s var(--ease) .35s forwards}
+@keyframes mechIn{to{opacity:.9;transform:translate(-50%,-50%) scale(1)}}
+.mRing{position:absolute;inset:0;border-radius:50%;border:1px dashed rgba(216,170,90,.44)}
+.mRing span{position:absolute;left:50%;top:50%;font-family:var(--serif);
+  font-size:clamp(9px,1.7vmin,13px);color:rgba(244,222,164,.95);letter-spacing:.02em;
+  white-space:nowrap;text-shadow:0 0 14px #05030a,0 0 7px #05030a,0 0 3px #020104,0 2px 5px #020104}
+.mPin{position:absolute;inset:0;border-radius:50%}
+.mPin:before{content:"";position:absolute;inset:0;border-radius:50%;
+  border:1px solid rgba(216,170,90,.3);
+  background:repeating-conic-gradient(from 0deg,transparent 0 5.6deg,rgba(216,170,90,.22) 5.6deg 6deg);
+  -webkit-mask:radial-gradient(circle,transparent 0 93%,#000 93.4% 97.6%,transparent 98%);
+  mask:radial-gradient(circle,transparent 0 93%,#000 93.4% 97.6%,transparent 98%)}
+.mPin span{position:absolute;left:50%;top:50%;font-family:var(--serif);font-weight:700;
+  font-size:clamp(13px,2.7vmin,19px);color:rgba(244,220,160,.88);letter-spacing:.08em;
+  white-space:nowrap;text-shadow:0 0 12px #05030a,0 0 6px #020104,0 2px 5px #020104}
+.mVeil{position:absolute;left:-6%;right:-6%;pointer-events:none;
+  top:-14%;height:30%;
+  background:linear-gradient(180deg,rgba(5,3,10,.985) 0%,rgba(5,3,10,.95) 62%,rgba(5,3,10,0) 100%)}
+.mVeil2{top:auto;bottom:-8%;height:28%;
+  background:linear-gradient(180deg,rgba(5,3,10,0) 0%,rgba(5,3,10,.93) 30%,rgba(5,3,10,.985) 65%,rgba(5,3,10,.985) 100%)}
+.mGua{position:absolute;inset:0;border-radius:50%}
+.mGua span{position:absolute;left:50%;top:50%;font-family:var(--serif);font-weight:700;
+  font-size:clamp(15px,3vmin,22px);color:rgba(247,226,168,1);letter-spacing:.04em;
+  white-space:nowrap;text-shadow:0 0 18px rgba(233,196,106,.72),0 0 6px #05030a,0 2px 6px #020104}
+.mGua span i{font-style:normal;font-size:.5em;color:rgba(240,214,150,.95);
+  letter-spacing:.14em;margin-left:.35em;vertical-align:.18em}
+.mNeedle{position:absolute;inset:0;pointer-events:none} /* 整盘wrapper, 旋转绕盘心 */
+.mNeedle:before{content:"";position:absolute;left:50%;top:-16px;margin-left:-14px;
+  width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;
+  border-top:24px solid #FF7A52;transform:translateY(3px);
+  filter:drop-shadow(0 1px 2px rgba(8,3,2,.95)) drop-shadow(0 0 9px rgba(255,110,70,.95))}
+.mNeedle:after{content:"";position:absolute;left:50%;top:17px;width:5px;height:46px;
+  margin-left:-2.5px;background:linear-gradient(180deg,rgba(255,122,82,.95),rgba(255,122,82,0));
+  filter:drop-shadow(0 0 8px rgba(255,110,70,.75))}
+@media(max-width:640px){.mech{width:min(94vmin,430px);height:min(94vmin,430px)}}
+@media (prefers-reduced-motion:reduce){
+  *,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .js h1 span{opacity:1;transform:none;text-shadow:none}
+  .js h1:after{transform:scaleX(1)}
+  .js .rv{opacity:1;transform:none}
+  .mech{animation:none;opacity:.9;transform:translate(-50%,-50%) scale(1)}
+  .panel{filter:none;transform:none}
+  .neb{transition:none}
+}
+.chk{display:flex;align-items:flex-start;gap:12px;cursor:pointer;user-select:none;background:rgba(26,14,10,.6);border:1px solid rgba(216,170,90,.24);border-radius:12px;padding:15px 16px;transition:border-color .2s}
+.chk:hover{border-color:rgba(216,170,90,.45)}
+.chk input{appearance:none;-webkit-appearance:none;flex:none;width:22px;height:22px;margin:2px 0 0;border:2px solid rgba(216,170,90,.5);border-radius:6px;position:relative;cursor:pointer}
+.chk input:checked{background:#E9C46A;border-color:#E9C46A}
+.chk input:checked:after{content:"";position:absolute;left:5px;top:1px;width:6px;height:11px;border:solid #140b04;border-width:0 2.5px 2.5px 0;transform:rotate(45deg)}
+.chk b{display:block;color:#EFE6D4;font-size:15px;font-weight:600}
+.chk i{display:block;color:#B3A284;font-size:13px;font-style:normal;line-height:1.6;margin-top:3px}
+#nmBox{margin-top:18px}
+
+<style>
+/* ─────────────────────────────────────────────
+   第一阶段 · 落地页 / 生成动画 / 结果页 / 分享
+   规则照旧: 少即是多 —— 大标题、短文案、强视觉、一个明确动作
+   ───────────────────────────────────────────── */
+.topnav{position:sticky;top:0;z-index:70;display:flex;align-items:center;justify-content:space-between;
+  gap:10px;padding:11px 2px;margin:0 -4px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  background:linear-gradient(180deg,rgba(4,2,8,.9),rgba(4,2,8,.15))}
+.topnav .brand{font-family:var(--serif);font-size:15px;letter-spacing:.3em;text-indent:.3em;color:#F0D79A;text-decoration:none}
+.topnav .grp{display:flex;align-items:center;gap:4px}
+.topnav .grp a{color:var(--dim);font-size:13.5px;text-decoration:none;padding:7px 10px;border-radius:var(--r-pill);
+  transition:color .2s,background .2s}
+.topnav .grp a:hover{color:var(--fg);background:rgba(216,170,90,.14)}
+.btnPrim{display:inline-block;border:0;cursor:pointer;font:inherit;font-size:15.5px;letter-spacing:.08em;
+  color:#170D05;background:linear-gradient(180deg,#F2D893,#D8A85A);border-radius:var(--r-pill);
+  padding:14px 34px;box-shadow:0 8px 24px -12px rgba(233,196,106,.9);transition:transform .25s var(--ease),box-shadow .25s,filter .2s}
+.btnPrim:hover{transform:translateY(-2px);filter:brightness(1.05);box-shadow:0 14px 32px -14px rgba(233,196,106,1)}
+.btnPrim:active{transform:none}
+.btnPrim.sm{font-size:13.5px;padding:11px 18px}
+.lg{padding:clamp(54px,9vh,104px) 0 0;scroll-margin-top:62px}
+.lg .kicker{font-family:var(--serif);font-size:12px;letter-spacing:.42em;text-indent:.42em;color:#E0654C;text-align:center}
+.lg h2.big{font-family:var(--serif);font-size:clamp(1.7rem,6.6vw,2.55rem);text-align:center;color:#F5E2B4;
+  letter-spacing:.08em;line-height:1.38;margin-top:14px;text-wrap:balance}
+.lg h2.big:before{content:none}
+.lg .lead{max-width:33em;margin:16px auto 0;text-align:center;color:var(--dim);font-size:15px;line-height:1.9}
+.sixGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(152px,1fr));gap:12px;margin-top:32px}
+.sixCell{position:relative;background:linear-gradient(180deg,rgba(30,17,11,.82),rgba(10,6,6,.92));
+  border:1px solid rgba(216,170,90,.18);border-radius:var(--r-card);padding:18px 16px 20px;transition:border-color .3s,transform .3s var(--ease)}
+.sixCell:hover{border-color:rgba(233,196,106,.5);transform:translateY(-3px)}
+.sixCell b{display:block;font-family:var(--serif);font-size:17.5px;letter-spacing:.1em;color:#F0D79A}
+.sixCell i{display:block;font-style:normal;color:var(--dim);font-size:13px;line-height:1.75;margin-top:9px}
+.sixCell u{position:absolute;right:13px;top:11px;text-decoration:none;font-family:var(--serif);
+  font-size:12.5px;color:rgba(233,196,106,.44);letter-spacing:.1em}
+.sampleHead{display:flex;align-items:baseline;gap:11px;flex-wrap:wrap}
+.sampleHead .name{font-family:var(--serif);font-size:clamp(1.6rem,6vw,2.2rem);color:#F5E2B4;letter-spacing:.1em}
+.pill{display:inline-block;font-size:12.5px;letter-spacing:.06em;color:var(--gold);
+  border:1px solid rgba(233,196,106,.45);background:rgba(233,196,106,.1);border-radius:var(--r-pill);padding:3px 11px}
+.pill.mz{color:#F0A18C;border-color:rgba(196,69,58,.5);background:rgba(196,69,58,.16)}
+.p4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:18px}
+.p4 div{text-align:center;background:rgba(8,5,10,.7);border:1px solid rgba(216,170,90,.18);border-radius:12px;padding:11px 4px}
+.p4 em{display:block;font-style:normal;font-size:11.5px;color:#9C8F76;letter-spacing:.1em}
+.p4 b{display:block;font-family:var(--serif);font-size:23px;color:#F5E2B4;margin-top:4px;letter-spacing:.08em}
+.p4 s{display:block;text-decoration:none;font-size:11.5px;color:#B8A585;margin-top:3px}
+.wxBars{margin-top:18px;display:grid;gap:9px}
+.wxB{display:grid;grid-template-columns:26px 1fr 36px;align-items:center;gap:10px;font-size:13px;color:var(--dim)}
+.wxB .bar{height:9px;border-radius:999px;background:rgba(216,170,90,.1);overflow:hidden}
+.wxB .bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#B7873E,#F0D48A);transition:width .9s var(--ease)}
+.wxB .v{text-align:right;color:#E8D6AE;font-variant-numeric:tabular-nums}
+.fact{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px;margin-top:18px}
+.fact div{background:rgba(8,5,10,.6);border:1px solid rgba(216,170,90,.16);border-radius:12px;padding:11px 8px;text-align:center}
+.fact em{font-style:normal;display:block;font-size:11.5px;color:#9C8F76}
+.fact b{display:block;font-family:var(--serif);font-size:17px;color:#F5E2B4;margin-top:4px;letter-spacing:.04em}
+.note{margin-top:14px;font-size:13px;color:var(--faint);line-height:1.8}
+.ctaBox{text-align:center;margin-top:28px}
+.ctaBox p{margin-top:14px;font-size:13.5px;color:var(--faint)}
+.ctaBox .btnPrim{padding:16px 42px;font-size:16.5px}
+/* 天机阁(表单区)抬头 */
+.hd2{padding:clamp(46px,8vh,86px) 0 0;text-align:center;scroll-margin-top:62px}
+.hd2:before{content:"入 阁 · 报 生 辰";display:block;font-family:var(--serif);font-size:12.5px;
+  letter-spacing:.5em;text-indent:.5em;color:#E0654C;margin-bottom:13px;font-weight:600}
+.hd2 h2{font-family:var(--serif);font-size:clamp(2rem,7.8vw,3rem);color:#F5E2B4;letter-spacing:.16em;
+  text-indent:.16em;line-height:1.2;text-shadow:0 0 30px rgba(233,196,106,.2)}
+.hd2 h2:before{content:none}
+.hd2 .sub{color:var(--dim);font-size:14.5px;margin-top:11px}
+.modeseg{max-width:340px;margin:22px auto 0}
+.modeHint{font-size:12.5px;color:var(--faint);margin-top:10px;min-height:1.4em}
+/* 命格生成动画 */
+#gen{position:fixed;inset:0;z-index:130;display:none;place-items:center;background:rgba(3,2,7,.93);
+  backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
+#gen.on{display:grid}
+.genBox{text-align:center;padding:0 24px;width:100%}
+.genRing{width:min(54vw,210px);aspect-ratio:1;margin:0 auto 24px;border-radius:50%;position:relative;
+  border:1px solid rgba(233,196,106,.5);display:grid;place-items:center;
+  box-shadow:inset 0 0 42px -10px rgba(233,196,106,.55),0 0 44px -14px rgba(233,196,106,.6)}
+.genRing:before{content:"";position:absolute;inset:15px;border-radius:50%;border:1px dashed rgba(216,170,90,.42);animation:genSpin 8s linear infinite}
+.genRing:after{content:"";position:absolute;inset:38px;border-radius:50%;border:1px solid rgba(196,69,58,.55);animation:genSpin 5s linear infinite reverse}
+.genRing .gz{font-family:var(--serif);font-size:clamp(30px,9vw,46px);color:#F5E2B4;letter-spacing:.12em;
+  animation:genPulse 1.5s ease-in-out infinite}
+@keyframes genSpin{to{transform:rotate(360deg)}}
+@keyframes genPulse{0%,100%{opacity:.6;text-shadow:0 0 0 rgba(233,196,106,0)}50%{opacity:1;text-shadow:0 0 26px rgba(233,196,106,.75)}}
+.genBox .gl{font-family:var(--serif);font-size:18px;letter-spacing:.4em;text-indent:.4em;color:#F0D79A}
+.genBox .gs{font-size:13px;color:var(--faint);margin-top:12px;letter-spacing:.06em}
+.genGz{display:flex;gap:10px;justify-content:center;margin-top:22px}
+.genGz span{font-family:var(--serif);font-size:21px;color:#E8D6AE;opacity:0;animation:genDrop .5s var(--ease) forwards}
+.genGz span:nth-child(2){animation-delay:.24s}
+.genGz span:nth-child(3){animation-delay:.48s}
+.genGz span:nth-child(4){animation-delay:.72s}
+@keyframes genDrop{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}
+/* 结果页 */
+#result[hidden]{display:none}
+#result{margin-top:clamp(16px,3vh,24px);scroll-margin-top:62px}
+.mailStat{display:flex;gap:11px;align-items:flex-start;border:1px solid rgba(216,170,90,.3);
+  background:rgba(20,12,8,.82);border-radius:var(--r-card);padding:14px 16px;font-size:13.5px;color:var(--dim);line-height:1.75}
+.mailStat b{color:#F0D79A;font-weight:600}
+.mailStat.err{border-color:rgba(196,69,58,.6);background:rgba(38,12,10,.78)}
+.mailStat .dotm{flex:none;width:9px;height:9px;border-radius:50%;background:#E9C46A;margin-top:7px;box-shadow:0 0 10px rgba(233,196,106,.85)}
+.mailStat.err .dotm{background:#E0654C;box-shadow:0 0 10px rgba(224,101,76,.85)}
+.acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.acts button{flex:1 1 150px;min-height:46px;border-radius:var(--r-pill);font:inherit;font-size:14.5px;cursor:pointer;
+  letter-spacing:.05em;border:1px solid rgba(216,170,90,.42);background:rgba(26,15,10,.85);color:#F0E4CC;transition:.22s}
+.acts button:hover{border-color:var(--gold);color:#fff;background:rgba(42,25,14,.92)}
+.acts button.pri{background:linear-gradient(180deg,#F2D893,#D8A85A);color:#170D05;border-color:transparent;font-weight:600}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
+#result .grid2{margin-top:14px}
+.skill{background:rgba(8,5,10,.62);border:1px solid rgba(216,170,90,.16);border-radius:12px;padding:13px 14px}
+.skill em{font-style:normal;font-size:11.5px;color:#9C8F76;letter-spacing:.08em}
+.skill b{display:block;font-family:var(--serif);font-size:17px;color:#F5E2B4;margin-top:5px;letter-spacing:.06em}
+.skill b i{font-style:normal;font-size:12.5px;color:var(--gold);margin-left:8px;font-family:var(--sans);letter-spacing:0}
+.skill p{margin-top:7px;font-size:13px;color:var(--dim);line-height:1.7}
+.rows{margin-top:14px;display:grid;gap:8px}
+.rowIt{display:grid;grid-template-columns:auto auto 1fr;gap:11px;align-items:baseline;
+  background:rgba(8,5,10,.55);border:1px solid rgba(216,170,90,.14);border-radius:10px;padding:9px 12px;
+  font-size:13.5px;color:var(--dim)}
+.rowIt b{font-family:var(--serif);color:#F0D79A;font-size:15.5px;letter-spacing:.06em}
+.rowIt u{text-decoration:none;font-size:11.5px;color:#9C8F76;white-space:nowrap}
+.rowIt.now{border-color:rgba(233,196,106,.55);background:rgba(42,27,12,.8)}
+.rowIt .nowTag{display:inline-block;font-size:11px;color:#170D05;background:#E9C46A;border-radius:999px;padding:1px 8px;margin-right:6px}
+.rowIt span{line-height:1.65}
+/* 分享图弹层 */
+#shm{position:fixed;inset:0;z-index:140;display:none;place-items:center;background:rgba(3,2,7,.95);padding:20px}
+#shm.on{display:grid}
+#shm .box{width:min(94vw,400px);max-height:92dvh;overflow:auto;text-align:center}
+#shm img{width:100%;border-radius:14px;border:1px solid rgba(216,170,90,.42);box-shadow:0 24px 70px -24px #000}
+#shm p{font-size:13px;color:var(--dim);margin-top:13px;line-height:1.75}
+.fine{max-width:36em;margin:18px auto 0;text-align:center;font-size:13px;color:#8D8574;line-height:2}
+@media(max-width:560px){
+  .topnav .grp a{display:none}
+  .sixGrid{grid-template-columns:1fr 1fr;gap:10px}
+  .sixCell{padding:15px 13px 17px}
+  .sixCell b{font-size:16px}
+  .grid2{grid-template-columns:1fr}
+  .p4{gap:6px}
+  .p4 b{font-size:19px}
+  .p4 s{font-size:10.5px}
+  .acts button{flex:1 1 100%}
+  .rowIt{grid-template-columns:auto auto;row-gap:5px}
+  .rowIt span{grid-column:1/-1}
+}
+</style>
+</head>
+<body>
+<canvas id="sky" aria-hidden="true"></canvas>
+<div class="mech" aria-hidden="true"><div class="mRing" id="mRing"></div><div class="mGua" id="mGua"></div><div class="mPin" id="mPin"></div><div class="mNeedle" id="mNeedle"></div><i class="mVeil"></i><i class="mVeil mVeil2"></i></div>
+<div class="neb n1" aria-hidden="true"></div>
+<div class="neb n2" aria-hidden="true"></div>
+
+<div class="wrap">
+<nav class="topnav">
+  <a class="brand" href="#top">修行世界</a>
+  <span class="grp">
+    <a href="#sample">真实卡例</a>
+    <a href="#tjg">天机阁</a>
+    <button class="btnPrim sm" type="button" data-jump="#tjg">开始推演</button>
+  </span>
+</nav>
+
+<!-- 01 · Hero -->
+<header class="hd" id="top">
+  <h1 id="ttl" data-br="5">你的命格，正在等待觉醒。</h1>
+  <p class="sub rv">修行世界 · 一个可以进去探索自己的东方人生系统</p>
+  <div class="ctaBox rv">
+    <button class="btnPrim" type="button" data-jump="#tjg">开始我的命格推演</button>
+    <p>约 2 分钟 · 只要出生的年月日时</p>
+  </div>
+</header>
+
+<!-- 02 · 六个自己 -->
+<section class="lg rv" id="six">
+  <div class="kicker">一 次 推 演</div>
+  <h2 class="big">一次推演，看见六个自己</h2>
+  <p class="lead">生辰是钥匙。同一份八字在天机阁里拆成六张脸,每一张都由排盘算出来,不是模板。</p>
+  <div class="sixGrid">
+    <div class="sixCell"><u>壹</u><b>称号</b><i>日主五行定的英雄名:守夜金客,还是守夜火客,天生的。</i></div>
+    <div class="sixCell"><u>贰</u><b>定位</b><i>格局决定你在场上的位置:刺客、坦克、法师还是辅助。</i></div>
+    <div class="sixCell"><u>叁</u><b>技能组</b><i>四柱各配一招:先天、社会、自身、成果。</i></div>
+    <div class="sixCell"><u>肆</u><b>属性面板</b><i>五行各一条,哪条短补哪条,一眼看清。</i></div>
+    <div class="sixCell"><u>伍</u><b>心魔副本</b><i>十神对应的两个心魔,和它们的破解方法。</i></div>
+    <div class="sixCell"><u>陆</u><b>赛季</b><i>大运十年一换,流年一年一换,你在第几季。</i></div>
+  </div>
+</section>
+
+<!-- 03 · 真实卡例 -->
+<section class="lg rv" id="sample">
+  <div class="kicker">真 实 输 出</div>
+  <h2 class="big">一张真实命格卡</h2>
+  <div class="card" style="margin-top:26px">
+    <span class="pnum">示例 · 1990-12-28 01:35 · 男</span>
+    <div class="sampleHead">
+      <span class="name">守夜火客</span>
+      <span class="pill">刺客 · 七杀·扶弱流</span>
+      <span class="pill mz">身弱</span>
+    </div>
+    <div class="p4">
+      <div><em>年柱</em><b>庚午</b><s>正财</s></div>
+      <div><em>月柱</em><b>戊子</b><s>伤官</s></div>
+      <div><em>日柱</em><b>丁卯</b><s>日主</s></div>
+      <div><em>时柱</em><b>辛丑</b><s>偏财</s></div>
+    </div>
+    <div class="wxBars">
+      <div class="wxB"><span>木</span><span class="bar"><i style="width:30%"></i></span><span class="v">1.5</span></div>
+      <div class="wxB"><span>火</span><span class="bar"><i style="width:50%"></i></span><span class="v">2.5</span></div>
+      <div class="wxB"><span>土</span><span class="bar"><i style="width:60%"></i></span><span class="v">3</span></div>
+      <div class="wxB"><span>金</span><span class="bar"><i style="width:60%"></i></span><span class="v">3</span></div>
+      <div class="wxB"><span>水</span><span class="bar"><i style="width:40%"></i></span><span class="v">2</span></div>
+    </div>
+    <div class="fact">
+      <div><em>格局</em><b>七杀</b></div>
+      <div><em>用神</em><b>火</b></div>
+      <div><em>喜神</em><b>木</b></div>
+      <div><em>忌神</em><b>水 · 金</b></div>
+      <div><em>起运</em><b>3年0个月</b></div>
+      <div><em>神煞</em><b>桃花 · 将星</b></div>
+    </div>
+    <p class="note">上面是同一次推演的结构输出。完整卡还会写出技能组、心魔副本、八个赛季与未来八年流年,直接飞进你的邮箱。</p>
+  </div>
+  <div class="ctaBox"><button class="btnPrim" type="button" data-jump="#tjg">推我一张</button></div>
+</section>
+
+<!-- 04 · 开始推演 -->
+<section class="lg rv" id="ctas">
+  <div class="kicker">下 一 步</div>
+  <h2 class="big">开始你的命格推演</h2>
+  <p class="lead">报上生辰,剩下的交给天机阁。</p>
+  <div class="ctaBox">
+    <button class="btnPrim" type="button" data-jump="#tjg">开始推演</button>
+    <p>推荐填公历生日 · 时辰不确定就先填 12:00</p>
+  </div>
+</section>
+
+<!-- 05 · 生辰信息 -->
+<header class="hd2" id="tjg">
+  <h2>天机阁</h2>
+  <p class="sub">入阁先报生辰 · 命格英雄卡推演既毕,直投你的邮箱</p>
+  <div class="seg modeseg" id="modeSeg"><i class="ink"></i><label><input type="radio" name="mode" value="normal" checked><span>普通</span></label><label><input type="radio" name="mode" value="pro"><span>专业 · 16 种排法</span></label></div>
+  <p class="modeHint" id="modeHint">普通:按最主流的推荐参数直接排。</p>
+</header>
+
+<ol class="steps rv" id="steps" aria-label="推演进度">
+  <li class="on" style="--i:0"><button type="button" data-go="0"><span class="dot">1</span><span class="txt">生辰</span></button></li>
+  <li style="--i:1"><button type="button" data-go="1"><span class="dot">2</span><span class="txt">流派</span></button></li>
+  <li style="--i:2"><button type="button" data-go="2"><span class="dot">3</span><span class="txt">名号</span></button></li>
+  <li style="--i:3"><button type="button" data-go="3"><span class="dot">4</span><span class="txt">入盘</span></button></li>
+</ol>
+
+<main id="stage">
+
+  <!-- 第一步 · 生辰 -->
+  <section class="panel on" id="p0" aria-labelledby="h0">
+    <div class="card">
+      <div class="ptop">
+        <span class="pnum">第一步 · 生辰</span>
+        <h2 id="h0" tabindex="-1">你来到世界的那一刻</h2>
+        <p class="phint">这一格定你的命盘底色。填得越准,后面的推演越贴你。</p>
+      </div>
+      <div class="pbody">
+        <div class="g2">
+          <div>
+            <div class="lab">性别 · 决定大运走向</div>
+            <div class="seg"><i class="ink"></i><label><input type="radio" name="sex" value="male" checked><span>男</span></label><label><input type="radio" name="sex" value="female"><span>女</span></label></div>
+          </div>
+          <div>
+            <div class="lab">纪年 · 你记的是哪种日子</div>
+            <div class="seg"><i class="ink"></i><label><input type="radio" name="cal" value="solar" checked><span>公历 · 阳历<i class="rec">推荐</i></span></label><label><input type="radio" name="cal" value="lunar"><span>农历 · 黄历</span></label></div>
+          </div>
+        </div>
+        <div class="lab">降生时刻</div>
+        <div class="row">
+          <input type="date" id="bd" value="2000-01-01" aria-label="出生日期">
+          <input type="time" id="bt" value="00:00" aria-label="出生时间">
+        </div>
+        <div id="leapWrap" style="display:none">
+          <div class="lab">闰月 · 阴历里多出来的月份</div>
+          <div class="seg"><i class="ink"></i><label><input type="radio" name="leap" value="0" checked><span>非闰月</span></label><label><input type="radio" name="leap" value="1"><span>闰月</span></label></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 第二步 · 流派 -->
+  <section class="panel" id="p1" aria-labelledby="h1h">
+    <div class="card">
+      <div class="ptop">
+        <span class="pnum">第二步 · 流派</span>
+        <h2 id="h1h" tabindex="-1">16 种排法,选你信的那个</h2>
+        <p class="phint">带「推荐」的是当前最主流、最精准的排法;拿不准就保持默认。</p>
+      </div>
+      <div class="pbody">
+        <div class="g2">
+          <div>
+            <div class="lab">换年 · 新岁从哪天算起</div>
+            <div class="seg"><i class="ink"></i><label><input type="radio" name="yearBound" value="lichun" checked><span>立春<i class="rec">推荐</i></span></label><label><input type="radio" name="yearBound" value="lunarnew"><span>正月初一</span></label></div>
+          </div>
+          <div>
+            <div class="lab">时间基准 · 用哪种钟</div>
+            <div class="seg"><i class="ink"></i><label><input type="radio" name="tz" value="bjt"><span>北京时间</span></label><label><input type="radio" name="tz" value="ts" checked><span>真太阳时<i class="rec">推荐</i></span></label></div>
+          </div>
+          <div>
+            <div class="lab">子时之争 · 23—24点算哪天</div>
+            <div class="seg"><i class="ink"></i><label><input type="radio" name="ziTime" value="today"><span>归当日</span></label><label><input type="radio" name="ziTime" value="tomorrow" checked><span>归次日<i class="rec">推荐</i></span></label></div>
+          </div>
+          <div>
+            <div class="lab">定月 · 月份怎么切</div>
+            <div class="seg"><i class="ink"></i><label><input type="radio" name="monthRule" value="jieqi" checked><span>节气定月<i class="rec">推荐</i></span></label><label><input type="radio" name="monthRule" value="lunar"><span>农历定月</span></label></div>
+          </div>
+        </div>
+        <div id="lonWrap" style="display:none">
+          <div class="lab">出生地 · 真太阳时按你头顶的太阳算</div>
+          <input type="text" id="city" list="cityList" placeholder="输入城市名,如:洛阳" autocomplete="off">
+          <datalist id="cityList"></datalist>
+          <div class="lab cityHint" id="cityHint"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 第三步 · 名号 -->
+  <section class="panel" id="p2" aria-labelledby="h2h">
+    <div class="card">
+      <div class="ptop">
+        <span class="pnum">第三步 · 名号</span>
+        <h2 id="h2h" tabindex="-1">卡上刻什么名字</h2>
+        <p class="phint">名号会送去做姓名学推演:五格数理、三才配置、字的五行喜用,和你的命盘并在一起看。开关在下面,不开就只推命盘。</p>
+      </div>
+      <div class="pbody">
+        <label class="chk"><input type="checkbox" id="nmOn"><span><b>姓名五格分析 · 可选</b><i>勾上才填名号——五格三才、字的五行,和命盘一起推;不勾就只推命盘</i></span></label>
+        <div id="nmBox" style="display:none">
+          <div class="lab">名号 · 2—6 个汉字</div>
+          <input type="text" id="nm" maxlength="6" placeholder="如:李白" autocomplete="off">
+          <div class="counter" id="nmHint">填 2—6 个汉字</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 第四步 · 入盘 -->
+  <section class="panel" id="p3" aria-labelledby="h3h">
+    <div class="card">
+      <div class="ptop">
+        <span class="pnum">第四步 · 入盘</span>
+        <h2 id="h3h" tabindex="-1">英雄卡寄到你手上</h2>
+        <p class="phint">留下邮箱:你会先收到一封「当前排位」;英雄卡炼成后,第二封飞过去。</p>
+      </div>
+      <div class="pbody">
+        <div class="lab">收卡邮箱</div>
+        <input type="email" id="mail" placeholder="你的邮箱 · 收卡用" autocomplete="email" aria-describedby="merr mailnote">
+              <div id="mailnote" class="lab" style="margin-top:10px;color:#8d8574;font-size:12.5px">邮箱仅用于发送排位与英雄卡,不作他用</div>
+        <div id="merr"></div>
+        <div class="lab" id="quota" style="margin-top:24px;color:#C9BC9C">命签每日有限:每台设备、每个邮箱各 3 次</div>
+        <button class="go" id="go">唤醒我的英雄卡</button>
+        <div class="load" id="load">入盘中……</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="nav">
+  <div id="err" role="alert" aria-live="polite"></div>
+  <div class="nbtns">
+    <button type="button" class="ghost hide" id="back">上一步</button>
+    <button type="button" class="next" id="next">下一步 · 流派</button>
+  </div>
+</div>
+
+<section class="card" id="doneCard">
+  <div class="doneMark">令</div>
+  <div class="doneTxt" id="doneTxt"></div>
+</section>
+
+<!-- 06 · 命格生成动画 -->
+<div id="gen" aria-hidden="true">
+  <div class="genBox">
+    <div class="genRing"><span class="gz" id="genGz">命</span></div>
+    <div class="gl">起 盘</div>
+    <div class="gs">正在把你的生辰排进天机阁</div>
+    <div class="genGz" id="genGzRow"></div>
+  </div>
+</div>
+
+<!-- 07 · 命格英雄卡(本地即时排盘) -->
+<section id="result" hidden>
+  <div class="mailStat" id="mailStat"><i class="dotm"></i><div id="mailStatTxt">命盘生成中…</div></div>
+
+  <div class="card" style="margin-top:14px">
+    <span class="pnum">命格英雄卡 · 本地即时排盘</span>
+    <div class="sampleHead" id="rHead"></div>
+    <div class="p4" id="rP4"></div>
+    <div class="wxBars" id="rWx"></div>
+    <div class="fact" id="rFact"></div>
+    <p class="note" id="rNote"></p>
+    <div class="acts">
+      <button class="pri" type="button" id="btnShare">保存分享图</button>
+      <button type="button" id="btnAgain">再推一次</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <span class="pnum">技能组 · 四柱各一招</span>
+    <div class="grid2" id="rSkills" style="margin-top:14px"></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card" style="margin-top:14px">
+      <span class="pnum">心魔副本</span>
+      <div class="rows" id="rMo"></div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <span class="pnum">赛季 · 大运</span>
+      <div class="rows" id="rDaYun"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <span class="pnum">版本更新 · 未来八年流年</span>
+    <div class="rows" id="rLiuNian"></div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <span class="pnum">完整卡 · 走邮箱</span>
+    <p class="note" style="margin-top:6px">开场语、连招口诀、姓名签、觉醒任务线这些长文案,炼成后第二封飞往你的邮箱;第一封是排位提醒。两封都没到,先翻垃圾箱。</p>
+  </div>
+</section>
+
+<!-- 09 · 修行世界介绍 -->
+<section class="lg rv" id="intro">
+  <div class="kicker">关 于 修 行 世 界</div>
+  <h2 class="big">东方人生系统</h2>
+  <p class="lead">八字、五行、大运、流年,是老祖宗留下的一套描述人生节奏的语言。修行世界把它翻译成你能玩起来的东西:一张卡、一排技能、两个心魔、八个赛季。</p>
+  <div class="ctaBox"><button class="btnPrim" type="button" data-jump="#tjg">进入天机阁</button></div>
+</section>
+
+<!-- 10 · 免责声明 -->
+<section class="lg rv" id="disc">
+  <div class="kicker">免 责 声 明</div>
+  <h2 class="big">传统文化说明</h2>
+  <p class="fine">本站内容基于中国传统命理文化的符号系统,用于文化体验、自省与玩味,不构成任何命定断言,也不构成医疗、投资、婚姻、法律或职业建议,请勿据此做出重大人生决策。生辰与邮箱仅用于生成本次推演,不作他用。</p>
+</section>
+
+<p class="foot rv">
+  <span class="sigil">修 行 世 界</span>
+  符号推演,供自省与玩味,不构成命定断言。<br>提交即入队,排位立刻飞到你的邮箱。
+</p>
+
+<!-- 分享图弹层 -->
+<div id="shm" role="dialog" aria-modal="true" aria-label="分享图">
+  <div class="box">
+    <img id="shmImg" alt="命格英雄卡分享图">
+    <p>手机:长按图片保存,再发朋友圈或群里。<br>电脑:点下面的按钮下载。</p>
+    <div class="acts">
+      <button class="pri" type="button" id="shmDl">下载图片</button>
+      <button type="button" id="shmClose">关闭</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id)};
+var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ── 标题逐字点亮 ───────────────────── */
+(function(){
+  var h=$("ttl"), s=h.textContent.trim(), brAt=parseInt(h.dataset.br,10);   /* data-br: 在第几个字后断行 */
+  h.textContent="";
+  for(var i=0;i<s.length;i++){
+    if(i===brAt)h.appendChild(document.createElement("br"));
+    var sp=document.createElement("span");
+    sp.textContent=s[i]; sp.style.setProperty("--i",i);
+    h.appendChild(sp);
+  }
+})();
+
+/* ── 分段控件滑块 ───────────────────── */
+function syncSeg(seg){
+  var ink=seg.querySelector(".ink"); if(!ink)return;
+  var ls=seg.querySelectorAll("label"), idx=-1;
+  for(var i=0;i<ls.length;i++){ if(ls[i].querySelector("input").checked){idx=i;break} }
+  if(idx>=0) ink.style.transform="translateX("+(idx*100)+"%)";
+}
+function syncAllSeg(){ document.querySelectorAll(".seg").forEach(syncSeg) }
+document.querySelectorAll(".seg").forEach(function(seg){
+  seg.addEventListener("change",function(){syncSeg(seg)});
+});
+syncAllSeg();
+
+function radio(n){var e=document.querySelector('input[name="'+n+'"]:checked');return e?e.value:""}
+
+/* ── 条件字段显隐 ───────────────────── */
+function toggleCond(){
+  $("leapWrap").style.display=radio("cal")==="lunar"?"block":"none";
+  $("lonWrap").style.display=radio("tz")==="ts"?"block":"none";
+  fit();
+}
+document.querySelectorAll('input[name="cal"],input[name="tz"]').forEach(function(r){
+  r.addEventListener("change",function(){toggleCond();fit()});
+});
+
+/* ── 城市 → 东经(真太阳时用) ────────── */
+var CITY={北京:116.41,上海:121.47,天津:117.2,重庆:106.55,广州:113.26,深圳:114.06,珠海:113.58,汕头:116.68,佛山:113.12,东莞:113.75,中山:113.39,惠州:114.42,江门:113.09,湛江:110.36,茂名:110.93,肇庆:112.47,梅州:116.12,南宁:108.37,柳州:109.42,桂林:110.29,梧州:111.28,北海:109.12,玉林:110.18,钦州:108.65,海口:110.2,三亚:109.51,石家庄:114.51,唐山:118.18,保定:115.46,邯郸:114.49,秦皇岛:119.6,沧州:116.86,廊坊:116.68,张家口:114.89,承德:117.96,邢台:114.5,衡水:115.67,太原:112.55,大同:113.3,临汾:111.52,运城:111,长治:113.12,晋中:112.75,吕梁:111.14,呼和浩特:111.75,包头:109.84,鄂尔多斯:109.78,赤峰:118.89,通辽:122.26,呼伦贝尔:119.77,沈阳:123.43,大连:121.62,鞍山:122.99,抚顺:123.96,锦州:121.13,丹东:124.38,营口:122.24,长春:125.32,吉林:126.55,延吉:129.51,四平:124.35,哈尔滨:126.53,大庆:125.11,齐齐哈尔:123.92,牡丹江:129.63,佳木斯:130.32,南京:118.8,苏州:120.58,无锡:120.3,常州:119.97,南通:120.86,徐州:117.18,扬州:119.42,泰州:119.93,盐城:120.16,镇江:119.45,淮安:119.02,连云港:119.22,宿迁:118.28,杭州:120.16,宁波:121.55,温州:120.7,嘉兴:120.76,绍兴:120.58,金华:119.65,台州:121.42,湖州:120.09,丽水:119.92,衢州:118.87,舟山:122.21,合肥:117.28,芜湖:118.43,蚌埠:117.39,安庆:117.06,阜阳:115.82,滁州:118.32,六安:116.52,马鞍山:118.51,福州:119.3,厦门:118.09,泉州:118.59,漳州:117.65,莆田:119.01,宁德:119.55,南平:118.18,三明:117.64,龙岩:117.02,南昌:115.89,赣州:114.94,九江:115.99,上饶:117.94,吉安:114.99,宜春:114.42,抚州:116.36,济南:117.12,青岛:120.38,烟台:121.45,潍坊:119.16,临沂:118.36,淄博:118.05,济宁:116.59,泰安:117.09,威海:122.12,德州:116.36,聊城:115.99,菏泽:115.48,枣庄:117.32,日照:119.53,滨州:117.97,东营:118.67,郑州:113.63,洛阳:112.45,开封:114.31,南阳:112.53,新乡:113.93,安阳:114.39,商丘:115.66,平顶山:113.19,焦作:113.24,周口:114.65,信阳:114.09,驻马店:114.02,许昌:113.85,濮阳:115.03,漯河:114.02,三门峡:111.2,鹤壁:114.3,武汉:114.31,宜昌:111.29,襄阳:112.14,荆州:112.24,黄石:115.04,十堰:110.8,孝感:113.92,黄冈:114.87,咸宁:114.32,随州:113.38,恩施:109.49,长沙:112.94,株洲:113.13,湘潭:112.94,衡阳:112.61,岳阳:113.13,常德:111.7,邵阳:111.47,郴州:113.02,怀化:110,永州:111.61,益阳:112.36,娄底:112,张家界:110.48,成都:104.07,绵阳:104.68,德阳:104.4,南充:106.11,宜宾:104.64,泸州:105.44,达州:107.5,乐山:103.77,内江:105.06,自贡:104.78,遂宁:105.59,眉山:103.85,广安:106.63,广元:105.84,巴中:106.75,资阳:104.63,攀枝花:101.72,雅安:103,贵阳:106.63,遵义:106.93,六盘水:104.83,安顺:105.95,毕节:105.28,铜仁:109.19,昆明:102.83,曲靖:103.8,玉溪:102.55,大理:100.23,丽江:100.23,昭通:103.72,保山:99.16,普洱:100.97,临沧:100.09,红河:103.38,文山:104.24,楚雄:101.55,拉萨:91.11,日喀则:88.88,昌都:97.17,林芝:94.36,西安:108.94,咸阳:108.71,宝鸡:107.24,渭南:109.51,汉中:107.02,榆林:109.73,延安:109.49,安康:109.03,商洛:109.94,铜川:108.95,兰州:103.83,天水:105.72,白银:104.14,庆阳:107.64,平凉:106.66,酒泉:98.51,张掖:100.45,武威:102.64,定西:104.62,陇南:104.92,西宁:101.78,银川:106.23,石嘴山:106.38,吴忠:106.2,固原:106.24,乌鲁木齐:87.62,喀什:75.99,伊宁:81.32,昌吉:87.3,克拉玛依:84.87,哈密:93.51,库尔勒:86.15,阿克苏:80.26,和田:79.92,吐鲁番:89.19,香港:114.17,澳门:113.55,台北:121.52,高雄:120.31,台中:120.68,台南:120.21};
+var CL=Object.keys(CITY);
+(function(){
+  var dl=$("cityList"),h="";
+  for(var i=0;i<CL.length;i++)h+="<option value="+CL[i]+">";
+  dl.innerHTML=h;
+})();
+function cityLon(){
+  var v=($("city").value||"").trim();
+  if(!v)return null;
+  if(CITY[v]!==undefined)return CITY[v];
+  var n=v.replace(/(省|市|自治区|地区|盟|州)$/,'');
+  if(CITY[n]!==undefined)return CITY[n];
+  if(v.length<2)return null;
+  for(var i=0;i<CL.length;i++){if(CL[i].indexOf(v)===0||v.indexOf(CL[i])===0)return CITY[CL[i]]}
+  var best=null,bn=0;
+  for(var i=0;i<CL.length;i++){if(v.indexOf(CL[i])>=0&&CL[i].length>bn){best=CL[i];bn=CL[i].length}}
+  return best?CITY[best]:null;
+}
+function paintCity(){
+  var el=$("cityHint"), v=($("city").value||"").trim(), l=cityLon();
+  el.className="lab cityHint";
+  if(!v){ el.textContent="输入城市名,自动校准你头顶的太阳"; return }
+  if(l===null){ el.textContent="这地名我认不出,换个写法(如:洛阳 / 洛阳市)"; el.classList.add("no") }
+  else { el.textContent="已校准 · 东经 "+l+" 度"; el.classList.add("ok") }
+}
+$("city").addEventListener("input",function(){paintCity();fit()});
+paintCity();
+
+/* ── 名号实时校验 ───────────────────── */
+var NAME_RE=/^[\u4e00-\u9fa5·]{2,6}$/;
+function paintName(){
+  var el=$("nmHint"), v=$("nm").value.trim();
+  el.className="counter";
+  if(!v){ el.textContent="填 2—6 个汉字"; return }
+  var ok=NAME_RE.test(v);
+  el.classList.add(ok?"ok":"no");
+  el.textContent=ok
+    ? v.length+" 字 · 将做五格数理与五行喜用推演"
+    : "名号要 2—6 个汉字(或带 · 的复姓)";
+  $("nm").classList.toggle("bad",!ok);
+}
+$("nm").addEventListener("input",function(){paintName();fit()});
+$("nmOn").addEventListener("change",function(){
+  var on=this.checked;
+  $("nmBox").style.display=on?"block":"none";
+  if(on){paintName();$("nm").focus()}
+  else{$("nm").classList.remove("bad");$("nmHint").className="counter";$("nmHint").textContent="填 2—6 个汉字"}
+  fit();
+});
+
+/* ── 设备标识: 每台电脑每天3次的记账 ── */
+function deviceId(){
+  var id="";
+  try{id=localStorage.getItem("xx_did")||""}catch(e){}
+  if(!id){
+    id=Date.now().toString(36)+Math.random().toString(36).slice(2,10);
+    try{localStorage.setItem("xx_did",id)}catch(e){}
+  }
+  return id;
+}
+function usedToday(){
+  try{return (JSON.parse(localStorage.getItem("xx_times")||"[]")||[]).filter(function(x){return Date.now()-x<864e5})}catch(e){return []}
+}
+
+/* ── 步骤机 ─────────────────────────── */
+var N=4, cur=0, SEQ=[0,1,2,3], STEPNAME={0:"生辰",1:"流派",2:"名号",3:"入盘"};
+var stage=$("stage"), lis=$("steps").children, moving=false;
+function fit(){
+  var done=$("doneCard").style.display==="block";
+  if(done){ stage.style.height="0px"; return }   /* 完成态: 舞台收起,避免留白 */
+  var on=stage.querySelector(".panel.on");
+  stage.style.height=(on?on.offsetHeight:0)+"px";
+}
+function showErr(m){var e=$("err");e.textContent=m;e.style.display=m?"block":"none";fit()}
+function hideErr(){showErr("")}
+
+function paintSteps(){
+  var at=SEQ.indexOf(cur);
+  for(var i=0;i<lis.length;i++){
+    var pos=SEQ.indexOf(i);
+    lis[i].style.display=pos<0?"none":"";            /* 普通模式: 流派整步隐藏 */
+    var dt=lis[i].querySelector(".dot"); if(dt)dt.textContent=(pos<0?i+1:pos+1);
+    lis[i].classList.toggle("on",i===cur);
+    lis[i].classList.toggle("lit",pos>=0&&pos<at);
+    var pn=$("p"+i); if(pn){var el=pn.querySelector(".pnum"); if(el)el.textContent="第"+(pos<0?i+1:pos+1)+"步 · "+STEPNAME[i];}
+  }
+  $("back").classList.toggle("hide",at<=0);
+  var nx=SEQ[at+1];
+  $("next").style.display=(nx===undefined||$("doneCard").style.display==="block")?"none":"";
+  $("next").textContent=nx===undefined?"":"下一步 · "+STEPNAME[nx];
+}
+function goto(i,skipCheck){
+  if(i===cur||moving)return;
+  if(i>cur&&!skipCheck){ var m=check(cur,i); if(m){showErr(m);return} }
+  hideErr();
+  var from=stage.querySelector(".panel.on"), to=$("p"+i), up=i>cur;
+  moving=true;
+  from.classList.remove("on"); from.classList.add(up?"out-up":"out-dn");
+  window.setTimeout(function(){ from.classList.remove("out-up","out-dn") },520);
+  to.classList.add("on");
+  cur=i;
+  paintSteps(); fit();
+  window.setTimeout(function(){
+    moving=false;
+    var h=to.querySelector("h2"); if(h)h.focus({preventScroll:true});
+  },340);
+  var t=to.querySelector("input:checked, input:not([type=radio])");
+  if(t)window.setTimeout(function(){t.focus({preventScroll:true})},420);
+}
+/* 每步的入口校验 */
+function check(from,to){
+  if(to<=from)return "";
+  if(from===0){
+    if(usedToday().length>=3) return "今日命签已用完 3 次,明日再来";
+    var bd=$("bd").value, bt=$("bt").value;
+    if(!bd||!bt)return "降生时刻还没填完整";
+  }
+  if(from===1&&radio("tz")==="ts"){
+    if($("city").value.trim()==="")return "真太阳时要先告诉我你在哪出生 — 差几度就差几分钟";
+    if(cityLon()===null)return "这地名我认不出,换个写法(如:洛阳 / 洛阳市)";
+  }
+  if(from===2){
+    var nmOn=$("nmOn").checked, nm=$("nm").value.trim();
+    if(nmOn&&!nm)return "勾了姓名分析就填个名号,或把开关关掉";
+    if(nmOn&&!NAME_RE.test(nm))return "名号用 2—6 个汉字(或带 · 的复姓)";
+  }
+  return "";
+}
+$("next").addEventListener("click",function(){var nx=SEQ[SEQ.indexOf(cur)+1];if(nx!==undefined)goto(nx)});
+$("back").addEventListener("click",function(){var pv=SEQ[SEQ.indexOf(cur)-1];if(pv!==undefined)goto(pv,true)});
+Array.prototype.forEach.call($("steps").querySelectorAll("button"),function(b){
+  b.addEventListener("click",function(){ var t=+b.dataset.go; if(SEQ.indexOf(t)>=0) goto(t) });
+});
+document.addEventListener("keydown",function(e){
+  if(e.key==="Escape"&&$("mask"))$("mask").classList.remove("on");
+});
+
+/* ── 提交: 本地即时排盘 → 生成动画 → 结果页 → 邮件入队 ── */
+$("go").addEventListener("click",function(){
+  var merr=$("merr"); merr.style.display="none"; $("mail").removeAttribute("aria-invalid");
+  var mail=$("mail").value.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)){
+    merr.textContent="邮箱地址看着不对"; merr.style.display="block"; $("mail").setAttribute("aria-invalid","true"); return;
+  }
+  if(usedToday().length>=3){
+    merr.textContent="今日命签已用完 3 次,明日再来"; merr.style.display="block"; return;
+  }
+  var btn=$("go"); btn.disabled=true; btn.textContent="入盘中……";
+  $("load").classList.add("on");
+  if(window.xx_lock)xx_lock();   /* 机关咔哒锁死 */
+
+  var payload=buildPayload(mail), chart=null, failMsg="";
+  try{
+    if(typeof Paipan==="undefined"||!Paipan.paipan) throw new Error("排盘引擎没加载上");
+    chart=Paipan.paipan(toInput(payload));
+  }catch(e){ failMsg=(e&&e.message)||String(e) }
+
+  playGen(chart,function(){
+    $("load").classList.remove("on");
+    if(chart) showResult(chart,Paipan.gameFields(chart),payload);
+    else showLocalFail(failMsg);
+    /* 收起全部步骤面板: 无论 fit 何时被触发,舞台都只会得 0 */
+    $("next").style.display="none"; $("back").classList.add("hide");
+    Array.prototype.forEach.call(stage.querySelectorAll(".panel.on"),function(p){p.classList.remove("on")});
+    stage.style.height="0px";
+    var dc=$("doneCard"); dc.style.display="block"; dc.classList.add("show");
+    $("doneTxt").innerHTML='<span class="strong">生辰已入盘</span>'+
+      "命盘已在下面展开;完整文案卡炼成后,第二封飞往 <b>"+mail.replace(/[<>&]/g,"")+"</b>。<br>没收到就翻翻垃圾箱。";
+    if(window.xx_burst)xx_burst();
+    paintQuota();
+    sendMail(payload,mail);
+    if(!$("result").hidden) $("result").scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"});
+  });
+});
+
+/* ── 尺寸同步 ───────────────────────── */
+var rt;
+window.addEventListener("resize",function(){clearTimeout(rt);rt=setTimeout(fit,120)});
+if(window.ResizeObserver){ new ResizeObserver(fit).observe(stage) }
+
+/* ── 入场揭示 ───────────────────────── */
+(function(){
+  var els=document.querySelectorAll(".rv");
+  if(reduce||!("IntersectionObserver" in window)){
+    Array.prototype.forEach.call(els,function(e){e.classList.add("in")}); return;
+  }
+  var io=new IntersectionObserver(function(en){
+    en.forEach(function(x){ if(x.isIntersecting){x.target.classList.add("in");io.unobserve(x.target)} });
+  },{threshold:.15});
+  Array.prototype.forEach.call(els,function(e){io.observe(e)});
+})();
+
+/* ── 八卦罗盘三环: 六十四卦外环(R46) + 先天八卦(R41) + 十二地支(R48.5) ── */
+(function(){
+  var mr=$("mRing"), mp=$("mPin"), gu=$("mGua");
+  if(!mr||!mp||!gu)return;
+  var GUA64=["乾","坤","屯","蒙","需","讼","师","比","小畜","履","泰","否","同人","大有","谦","豫","随","蛊","临","观","噬嗑","贲","剥","复","无妄","大畜","颐","大过","坎","离","咸","恒","遁","大壮","晋","明夷","家人","睽","蹇","解","损","益","夬","姤","萃","升","困","井","革","鼎","震","艮","渐","归妹","丰","旅","巽","兑","涣","节","中孚","小过","既济","未济"];
+  if(GUA64.length!==64)throw new Error("GUA64="+GUA64.length);
+  var h="";
+  for(var i=0;i<64;i++){
+    var a=i*5.625, sx=Math.abs(Math.sin(a*Math.PI/180));
+    var op=sx>.878?1:0;
+    h+='<span style="left:'+(50+46.5*Math.sin(a*Math.PI/180))+'%;top:'+(50-46.5*Math.cos(a*Math.PI/180))+'%;opacity:'+op+';transform:translate(-50%,-50%)">'+GUA64[i]+'</span>';
+  }
+  mr.innerHTML=h;
+  /* 先天八卦(伏羲方位, 上南下北): 乾0 巽45 坎90 艮135 坤180 震225 离270 兑315 */
+  var BG=[[0,"乾","☰"],[45,"巽","☴"],[90,"坎","☵"],[135,"艮","☶"],[180,"坤","☷"],[225,"震","☳"],[270,"离","☲"],[315,"兑","☱"]], bh="";
+  for(var k=0;k<8;k++){
+    var ba=BG[k][0];
+    bh+='<span style="left:'+(50+43*Math.sin(ba*Math.PI/180))+'%;top:'+(50-43*Math.cos(ba*Math.PI/180))+'%;transform:translate(-50%,-50%)">'+BG[k][2]+'<i>'+BG[k][1]+'</i></span>';
+  }
+  gu.innerHTML=bh;
+  /* 十二地支: 子北(下) 午南(上) 卯东(左) 酉西(右), 每30° */
+  var DZ="子丑寅卯辰巳午未申酉戌亥", dh="";
+  for(var z=0;z<12;z++){
+    var da=(180+z*30)%360, ds=Math.abs(Math.sin(da*Math.PI/180));
+    var dop=ds>.815?1:0;
+    dh+='<span style="left:'+(50+50.5*Math.sin(da*Math.PI/180))+'%;top:'+(50-50.5*Math.cos(da*Math.PI/180))+'%;opacity:'+dop+';transform:translate(-50%,-50%)">'+DZ.charAt(z)+'</span>';
+  }
+  mp.innerHTML=dh;
+})();
+/* ── 启动 ───────────────────────────── */
+toggleCond(); paintSteps(); paintName(); fit();
+window.setTimeout(fit,300);
+window.addEventListener("load",fit);
+
+/* ══════════════════════════════════════
+   星空: 星尘两层 + 鼠标聚拢 + 视差 + 爆发
+   ══════════════════════════════════════ */
+(function(){
+  var cv=$("sky"); if(!cv||!cv.getContext)return;
+  var x=cv.getContext("2d"), W=0,H=0,DPR=1;
+  var far=[], near=[], embers=[], running=true, t0=0;
+  var mrEl=$("mRing"), mpEl=$("mPin"), guEl=$("mGua"), dnEl=$("mNeedle");
+  var rA=0, gA=0, pA=0, nA=0; /* 三环+指针角(rad): 六十四卦/先天八卦/地支刻度/游标 */
+  var mechState=0, lastT=0; /* 0=运转 1=锁定吸附 2=锁死 */
+  window.xx_lock=function(){ if(!reduce&&mechState===0)mechState=1; };
+  window.xx_unlock=function(){ mechState=0; };
+  window.xx_mech=function(){ return mechState; };   /* 测试钩 */
+  window.xx_dbg=function(){
+    var s1=5.625*.017453,s2=45*.017453,s3=6*.017453;
+    var d=function(a,s){return Math.abs(Math.round(a/s)*s-a)};
+    return {s:mechState,d:[d(rA,s1),d(gA,s2),d(pA,s3)]};
+  };
+
+  var mx=.5,my=.5, px=.5,py=.5;         /* 目标 / 当前 视差 */
+  var cx=-9999,cy=-9999, hasPtr=false;
+
+  /* 预渲染光晕精灵, 比每帧 shadowBlur 快得多 */
+  var sp=document.createElement("canvas"); sp.width=sp.height=64;
+  var sx=sp.getContext("2d");
+  var g=sx.createRadialGradient(32,32,0,32,32,32);
+  g.addColorStop(0,"rgba(255,236,196,1)");
+  g.addColorStop(.28,"rgba(233,196,106,.5)");
+  g.addColorStop(1,"rgba(233,196,106,0)");
+  sx.fillStyle=g; sx.fillRect(0,0,64,64);
+
+  function rnd(a,b){return a+Math.random()*(b-a)}
+  function size(){
+    DPR=Math.min(window.devicePixelRatio||1,2);
+    W=cv.clientWidth; H=cv.clientHeight;
+    cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR);
+    x.setTransform(DPR,0,0,DPR,0,0);
+    seed();
+  }
+  function seed(){
+    var fs=Math.round(W*H/8200); fs=Math.max(70,Math.min(fs,170));
+    far.length=0; near.length=0;
+    for(var i=0;i<fs;i++) far.push({
+      x:Math.random()*W, y:Math.random()*H, r:rnd(.4,1.05),
+      a:rnd(.16,.62), sp:rnd(.0004,.0016), ph:Math.random()*6.28, dz:rnd(.2,.6)
+    });
+    var ns=Math.max(14,Math.round(fs/5));
+    for(var j=0;j<ns;j++) near.push({
+      x:Math.random()*W, y:Math.random()*H, r:rnd(1.5,3.4),
+      a:rnd(.35,.9), sp:rnd(.0007,.0024), ph:Math.random()*6.28,
+      dz:rnd(.8,1.9), vx:rnd(-.05,.05), vy:rnd(-.04,.04)
+    });
+  }
+  function draw(t){
+    if(!t0)t0=t;
+    var e=t-t0;
+    px+=(mx-px)*.045; py+=(my-py)*.045;
+    var ox=(px-.5), oy=(py-.5);
+    x.clearRect(0,0,W,H);
+
+    /* 远层: 细碎星点 */
+    for(var i=0;i<far.length;i++){
+      var s=far[i];
+      var tw=.55+.45*Math.sin(e*s.sp+s.ph);
+      var px2=s.x+ox*26*s.dz, py2=s.y+oy*20*s.dz;
+      x.globalAlpha=s.a*tw;
+      x.fillStyle="#f3e2b8";
+      x.beginPath(); x.arc(px2,py2,s.r,0,6.283); x.fill();
+    }
+    /* 近层: 光晕星 + 鼠标聚拢 */
+    for(var j=0;j<near.length;j++){
+      var n=near[j];
+      if(hasPtr&&!reduce){
+        var dx=cx-(n.x+ox*70), dy=cy-(n.y+oy*54), d=Math.hypot(dx,dy);
+        if(d<190&&d>.5){ var f=(1-d/190)*.85; n.x+=dx/d*f; n.y+=dy/d*f }
+      }
+      if(!reduce){ n.x+=n.vx; n.y+=n.vy;
+        if(n.x<-30)n.x=W+30; if(n.x>W+30)n.x=-30;
+        if(n.y<-30)n.y=H+30; if(n.y>H+30)n.y=-30 }
+      var tw2=.6+.4*Math.sin(e*n.sp*1.4+n.ph);
+      var nx=n.x+ox*70*n.dz, ny=n.y+oy*54*n.dz;
+      x.globalAlpha=n.a*tw2*.45;
+      var sz=n.r*9;
+      x.drawImage(sp,nx-sz/2,ny-sz/2,sz,sz);
+      x.globalAlpha=n.a*tw2;
+      x.fillStyle="#fff6dd";
+      x.beginPath(); x.arc(nx,ny,n.r*.6,0,6.283); x.fill();
+    }
+    /* 八卦罗盘: 六十四卦顺 / 八卦逆 / 地支刻度慢逆 + 鼠标近盘加速; 锁定三环吸附整格定格 */
+    var dt=lastT?Math.min((t-lastT)/1000,.06):0; lastT=t;
+    if(!reduce){
+      if(mechState===0){
+        var bx=cx-W/2, by=cy-H/2;
+        var boost=1+2.6*Math.exp(-(bx*bx+by*by)/67600);
+        rA+=.004*boost*dt; gA-=.006*boost*dt; pA-=.0025*boost*dt;
+        var na=10*Math.sin(e*.00013);
+        if(hasPtr)na=.5*na+.5*(Math.atan2(cx-W/2,H/2-cy)*57.2958);
+        nA=na*Math.PI/180;
+      }else if(mechState===1){
+        var s1=5.625*.017453,s2=45*.017453,s3=6*.017453;
+        rA+=(Math.round(rA/s1)*s1-rA)*.26;
+        gA+=(Math.round(gA/s2)*s2-gA)*.26;
+        pA+=(Math.round(pA/s3)*s3-pA)*.26;
+        nA+=(Math.round(nA/(45*.017453))*(45*.017453)-nA)*.26;
+        var ok=true;
+        for(var q=0;q<3;q++){
+          var ss=[s1,s2,s3][q], aa=[rA,gA,pA][q];
+          if(Math.abs(Math.round(aa/ss)*ss-aa)>.012){ok=false;break}
+        }
+        if(ok&&Math.abs(Math.round(nA/(45*.017453))*(45*.017453)-nA)<.012)mechState=2;
+      }
+      var D=57.2958;
+      if(mrEl)mrEl.style.transform="rotate("+(rA*D)+"deg)";
+      if(guEl)guEl.style.transform="rotate("+(gA*D)+"deg)";
+      if(mpEl)mpEl.style.transform="rotate("+(pA*D)+"deg)";
+      if(dnEl)dnEl.style.transform="rotate("+(nA*D)+"deg)";
+    }
+    /* 提交时的星屑爆发 */
+    for(var k=embers.length-1;k>=0;k--){
+      var m=embers[k];
+      m.x+=m.vx; m.y+=m.vy; m.vy+=.055; m.vx*=.985; m.vy*=.985; m.life-=.016;
+      if(m.life<=0){embers.splice(k,1);continue}
+      x.globalAlpha=Math.max(0,m.life)*m.a;
+      x.fillStyle=m.c;
+      x.beginPath(); x.arc(m.x,m.y,m.r,0,6.283); x.fill();
+    }
+    x.globalAlpha=1;
+    if(running)requestAnimationFrame(draw);
+  }
+  window.xx_burst=function(){
+    if(reduce)return;
+    var ox=W/2, oy=H*.42;
+    for(var i=0;i<150;i++){
+      var a=Math.random()*6.283, v=rnd(1.4,7.2);
+      embers.push({x:ox,y:oy,vx:Math.cos(a)*v,vy:Math.sin(a)*v-1.4,
+        r:rnd(.7,2.6),life:rnd(.9,1.9),a:rnd(.5,1),
+        c:Math.random()<.45?"#E9C46A":"#E0604A"});
+    }
+  };
+  /* 指针视差(星云/标题随动); 机关跟手由 draw 内自行取 cx/cy */
+  window.addEventListener("pointermove",function(e){
+    mx=e.clientX/(window.innerWidth||1); my=e.clientY/(window.innerHeight||1);
+    cx=e.clientX; cy=e.clientY; hasPtr=true;
+    var n1=document.querySelector(".n1"), n2=document.querySelector(".n2");
+    if(n1)n1.style.transform="translate3d("+((mx-.5)*-46)+"px,"+((my-.5)*-30)+"px,0)";
+    if(n2)n2.style.transform="translate3d("+((mx-.5)*40)+"px,"+((my-.5)*26)+"px,0)";
+    var h=$("ttl"); if(h)h.style.transform="translate3d("+((mx-.5)*-8)+"px,"+((my-.5)*-5)+"px,0)";
+  },{passive:true});
+  document.addEventListener("visibilitychange",function(){
+    if(document.hidden){running=false}
+    else if(!reduce){running=true;t0=0;requestAnimationFrame(draw)}
+  });
+  window.addEventListener("resize",function(){clearTimeout(cv._r);cv._r=setTimeout(size,150)});
+  size();
+  if(reduce){ draw(0); running=false; }
+  else requestAnimationFrame(draw);
+})();
+
+/* ══ 第一阶段: 普通/专业 · 本地排盘 · 生成动画 · 结果页 · 分享图 ══ */
+function qa(sel){return Array.prototype.slice.call(document.querySelectorAll(sel))}
+function esc(t){return String(t==null?"":t).replace(/[<>&"]/g,function(c){return {"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]})}
+function scrollTo(sel){var t=document.querySelector(sel); if(t)t.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"})}
+
+/* 表单 → 提交/排盘 共用同一份载荷, 前后端不会走样 */
+function buildPayload(mail){
+  return {
+    subject:"天机阁排盘申请",
+    email:mail||$("mail").value.trim(),
+    birth:$("bd").value+"T"+$("bt").value,
+    sex:radio("sex"),
+    cal:radio("cal"),
+    leap:radio("leap")==="1",
+    school:[radio("yearBound"),radio("ziTime"),radio("tz"),radio("monthRule")].join(","),
+    lon:(radio("tz")==="ts"?(cityLon()||120):120),
+    city:$("city").value.trim(),
+    name:$("nmOn").checked?$("nm").value.trim():"",
+    did:deviceId(),
+    ts:new Date().toISOString()
+  };
+}
+function toInput(f){
+  var bd=String(f.birth||"").split("T")[0].split("-"), bt=String(f.birth||"").split("T")[1].split(":");
+  var sc=String(f.school||"").split(","), sv=function(i,d){return (sc[i]&&sc[i].trim())||d};
+  return {y:+bd[0],m:+bd[1],d:+bd[2],hh:+bt[0]||0,mm:+bt[1]||0,
+    gender:f.sex==="female"?"female":"male",
+    cal:f.cal==="lunar"?"lunar":"solar",
+    leap:f.leap===true||f.leap==="true"||f.leap==="1",
+    school:{yearBound:sv(0,"lichun"),ziTime:sv(1,"today"),tz:sv(2,"bjt"),lon:parseFloat(f.lon)||120,monthRule:sv(3,"jieqi")}};
+}
+
+/* ── 普通 / 专业 ─────────────────────── */
+function applyMode(m){
+  SEQ=(m==="pro")?[0,1,2,3]:[0,2,3];
+  $("modeHint").textContent=(m==="pro")
+    ? "专业:16 种排法自选 —— 换年、真太阳时、子时之争、定月。"
+    : "普通:按最主流的推荐参数直接排,不用懂术语。";
+  if(SEQ.indexOf(cur)<0){
+    Array.prototype.forEach.call(stage.querySelectorAll(".panel"),function(p){p.classList.remove("on")});
+    cur=SEQ[0]; $("p"+cur).classList.add("on");
+  }
+  paintSteps(); fit();
+}
+qa('input[name="mode"]').forEach(function(r){ r.addEventListener("change",function(){applyMode(this.value)}) });
+
+/* ── 剩余命签 ─────────────────────────── */
+function paintQuota(){
+  var q=$("quota"); if(!q)return;
+  var left=3-usedToday().length;
+  q.textContent="命签每日有限:每台设备、每个邮箱各 3 次 · 本机今日还剩 "+(left<0?0:left)+" 次";
+}
+$("mail").addEventListener("input",function(){
+  var m=this.value.trim(), mh={};
+  try{mh=JSON.parse(localStorage.getItem("xx_mails")||"{}")}catch(e){}
+  $("mailnote").textContent=(m&&mh[m])
+    ? "邮箱仅用于发送排位与英雄卡 · 这个邮箱本机已用 "+mh[m]+" 次"
+    : "邮箱仅用于发送排位与英雄卡,不作他用";
+});
+
+/* ── 跳转按钮 ─────────────────────────── */
+qa("[data-jump]").forEach(function(b){ b.addEventListener("click",function(){scrollTo(b.dataset.jump)}) });
+
+/* ── 06 · 命格生成动画 ────────────────── */
+function playGen(chart,cb){
+  var el=$("gen");
+  if(reduce||!chart){ el.classList.remove("on"); cb(); return }
+  $("genGz").textContent=chart.dayGan;
+  $("genGzRow").innerHTML=chart.gz.map(function(z){return "<span>"+z+"</span>"}).join("");
+  var labels=["起 盘","定 格","入 卡"], i=0, gl=el.querySelector(".gl");
+  gl.textContent=labels[0]; el.classList.add("on");
+  var iv=setInterval(function(){ i++; if(i<labels.length) gl.textContent=labels[i]; },560);
+  setTimeout(function(){ clearInterval(iv); el.classList.remove("on"); cb() },1750);
+}
+
+/* ── 07 · 结果页 ─────────────────────── */
+var chartCache=null, gameCache=null, payloadCache=null;
+function paintAll(display){ qa("#result .card, #result .grid2").forEach(function(e){ if(e!==$("result")) e.style.display=display }) }
+
+/* 扶抑取用: 身弱 -> 同我为用、生我为喜(忌克泄耗); 身强 -> 我克为用、我生为喜(忌生扶) */
+function ysShow(p){
+  var y=p.yongShen, strong=p.wangShuai.shen==="强";
+  return strong
+    ? {ys:y.hao, xs:y.xie, js:y.shengWo+" · "+y.biJie}
+    : {ys:y.biJie, xs:y.shengWo, js:y.keWo+" · "+y.hao};
+}
+function showResult(p,g,f){
+  chartCache=p; gameCache=g; payloadCache=f;
+  paintAll("");
+  $("result").hidden=false;
+  $("rHead").innerHTML='<span class="name">'+esc(g.title)+'</span>'+
+    '<span class="pill">'+esc(g.position)+' · '+esc(g.school)+'</span>'+
+    '<span class="pill mz">身'+esc(p.wangShuai.shen)+'</span>'+
+    (p.shenSha.length?'<span class="pill">'+esc(p.shenSha.join(" · "))+'</span>':'');
+  var PN=["年柱","月柱","日柱","时柱"];
+  $("rP4").innerHTML=p.gz.map(function(z,i){
+    return '<div><em>'+PN[i]+'</em><b>'+z+'</b><s>'+esc(p.shiShenTg[i])+'</s></div>';
+  }).join("");
+  $("rWx").innerHTML=g.panel.map(function(w){
+    return '<div class="wxB"><span>'+w.elem+'</span><span class="bar"><i style="width:'+(w.val/5*100)+'%"></i></span><span class="v">'+w.val+'</span></div>';
+  }).join("");
+  var y=ysShow(p);
+  var facts=[["格局",p.ge],["旺衰",p.wangShuai.shen],["用神",y.ys],["喜神",y.xs],
+             ["忌神",y.js],["起运",p.qiYun],["神煞",p.shenSha.join(" · ")||"—"],["生日",p.solar.slice(0,10)]];
+  $("rFact").innerHTML=facts.map(function(x){return '<div><em>'+esc(x[0])+'</em><b>'+esc(x[1])+'</b></div>'}).join("");
+  $("rNote").textContent=[p.lunar+" · 农历", p.notes.join(" · "),
+    "姓名五格分析 "+(f.name?"已随卡推演:五格、三才、字五行":"未开启,只推命盘")].filter(Boolean).join(" · ")+"。";
+  $("rSkills").innerHTML=g.skills.map(function(sk){
+    return '<div class="skill"><em>'+esc(sk.pos)+'</em><b>'+esc(sk.name)+'<i>'+esc(sk.god)+' · '+sk.gz+'</i></b><p>'+esc(sk.desc)+'</p></div>';
+  }).join("");
+  $("rMo").innerHTML=g.mo.map(function(m){
+    return '<div class="rowIt"><b>'+esc(m.name)+'</b><u>'+esc(m.god)+'心魔</u><span>破解:'+esc(m.fix)+'</span></div>';
+  }).join("");
+  var now=new Date().getTime(), curDY=-1;
+  p.daYun.forEach(function(d,i){ if(now>=Date.parse(d.startYear+"-01-01")&&now<Date.parse((d.startYear+10)+"-01-01")) curDY=i; });
+  $("rDaYun").innerHTML=p.daYun.map(function(d,i){
+    var ss=Paipan.shiShen(p.dayGan,d.gz[0]);
+    return '<div class="rowIt'+(i===curDY?' now':'')+'"><b>'+d.gz+'</b><u>'+d.startAge+'岁 · '+d.startYear+'</u>'+
+      '<span>'+ss+(i===curDY?' <i class="nowTag">当前</i>':'')+'</span></div>';
+  }).join("");
+  var thisY=new Date().getFullYear();
+  $("rLiuNian").innerHTML=p.liuNian.map(function(n){
+    var isNow=n.year===thisY;
+    return '<div class="rowIt'+(isNow?' now':'')+'"><b>'+n.gz+'</b><u>'+n.year+'</u>'+
+      '<span>'+n.ss+(isNow?' <i class="nowTag">当前</i>':'')+'</span></div>';
+  }).join("");
+}
+
+function showLocalFail(msg){
+  chartCache=null;
+  $("result").hidden=false;
+  $("rHead").innerHTML='<span class="name">命盘待出</span><span class="pill mz">本地排盘未成功</span>';
+  $("rNote").textContent="浏览器这一步没跑通("+(msg||"未知")+"),生辰已经送到,完整卡会从邮箱到 —— 下面的排盘结果由邮件里的那份给出。";
+  var cards=qa("#result .card"), gr=qa("#result .grid2");
+  cards.forEach(function(c,i){ if(i>0)c.style.display="none" });
+  gr.forEach(function(g){ g.style.display="none" });
+  $("rP4").innerHTML=""; $("rWx").innerHTML=""; $("rFact").innerHTML="";
+}
+
+/* ── 邮件入队状态 ─────────────────────── */
+var lastPayload=null;
+function setStat(kind,html){ $("mailStat").classList.toggle("err",kind==="err"); $("mailStatTxt").innerHTML=html }
+function sendMail(payload,mail){
+  lastPayload=payload;
+  setStat("wait","<b>生辰正在入队…</b><br>排位提醒会先飞往 "+esc(mail));
+  fetch("https://api.beam.page/actions/xiuxing-world/email",{
+    method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)
+  }).then(function(r){
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    try{ var t=usedToday(); t.push(Date.now()); localStorage.setItem("xx_times",JSON.stringify(t.slice(-3))) }catch(e){}
+    try{ var mh=JSON.parse(localStorage.getItem("xx_mails")||"{}"); mh[mail]=(mh[mail]||0)+1;
+         localStorage.setItem("xx_mails",JSON.stringify(mh)) }catch(e){}
+    setStat("ok","<b>生辰已入队。</b><br>第一封(排位)马上出发;英雄卡炼成后,第二封飞往 "+esc(mail)+"。<br>两封都没到就翻翻垃圾箱。");
+    paintQuota();
+    var mn=$("mailnote"); if(mn)mn.textContent="邮箱仅用于发送排位与英雄卡 · 这个邮箱本机已用 "+((JSON.parse(localStorage.getItem("xx_mails")||"{}")[mail])||1)+" 次";
+  }).catch(function(e){
+    setStat("err","<b>邮件通道没打通:</b>"+esc(e.message||"网络错误")+"。命盘已经出在下面,可直接看。<br>"+
+      "<button class=\"btnPrim sm\" type=\"button\" id=\"btnRetry\" style=\"margin-top:10px\">重发邮件</button>");
+  });
+}
+$("mailStat").addEventListener("click",function(e){
+  if(e.target&&e.target.id==="btnRetry"&&lastPayload) sendMail(lastPayload,lastPayload.email);
+});
+
+/* ── 再推一次 ─────────────────────────── */
+$("btnAgain").addEventListener("click",function(){
+  $("result").hidden=true; paintAll("");
+  $("doneCard").style.display="none";
+  Array.prototype.forEach.call(stage.querySelectorAll(".panel"),function(p){p.classList.remove("on")});
+  var first=SEQ[0]; cur=first; $("p"+first).classList.add("on");
+  var btn=$("go"); btn.disabled=false; btn.textContent="唤醒我的英雄卡";
+  paintSteps(); fit(); scrollTo("#tjg");
+});
+
+/* ── 分享图 (1080×1520, 手机长按保存) ── */
+$("btnShare").addEventListener("click",function(){
+  if(!chartCache||!gameCache) return;
+  var p=chartCache, g=gameCache, W=1080, H=1520;
+  var c=document.createElement("canvas"); c.width=W; c.height=H;
+  var x=c.getContext("2d");
+  var bg=x.createLinearGradient(0,0,0,H);
+  bg.addColorStop(0,"#1E1018"); bg.addColorStop(.45,"#0C0710"); bg.addColorStop(1,"#050308");
+  x.fillStyle=bg; x.fillRect(0,0,W,H);
+  var rg=x.createRadialGradient(W/2,H*.2,30,W/2,H*.2,660);
+  rg.addColorStop(0,"rgba(150,60,44,.42)"); rg.addColorStop(1,"rgba(150,60,44,0)");
+  x.fillStyle=rg; x.fillRect(0,0,W,H);
+  x.strokeStyle="rgba(233,196,106,.85)"; x.lineWidth=3; x.strokeRect(44,44,W-88,H-88);
+  x.strokeStyle="rgba(233,196,106,.3)";  x.lineWidth=1; x.strokeRect(62,62,W-124,H-124);
+  function serif(sz,w){x.font=(w||700)+" "+sz+"px 'Songti SC','STSong','Noto Serif CJK SC','SimSun',serif"}
+  function sans(sz){x.font=sz+"px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif"}
+  x.textAlign="center"; x.textBaseline="alphabetic";
+  /* 印 */
+  x.fillStyle="#B4382C"; x.fillRect(W-176,80,96,96);
+  x.strokeStyle="rgba(255,235,210,.7)"; x.lineWidth=2; x.strokeRect(W-166,90,76,76);
+  serif(40); x.fillStyle="#FFEEDD"; x.fillText("天",W-128,130); x.fillText("机",W-128,168);
+  serif(30); x.fillStyle="#E0654C"; x.fillText("修 行 世 界 · 天 机 阁",W/2,150);
+  serif(96); x.fillStyle="#F5E2B4"; x.fillText(g.title,W/2,270);
+  sans(30); x.fillStyle="#D8B36A"; x.fillText(g.position+" · "+g.school+" · 身"+p.wangShuai.shen,W/2,328);
+  /* 四柱 */
+  var cols=["年柱 · 先天","月柱 · 社会","日柱 · 自身","时柱 · 成果"], cw=(W-160)/4;
+  for(var i=0;i<4;i++){
+    var bx=80+cw*i+5, cx=bx+cw/2-5;
+    x.fillStyle="rgba(6,4,10,.62)"; x.fillRect(bx,390,cw-10,250);
+    x.strokeStyle="rgba(216,170,90,.35)"; x.lineWidth=1; x.strokeRect(bx,390,cw-10,250);
+    sans(22); x.fillStyle="#9C8F76"; x.fillText(cols[i],cx,436);
+    serif(54); x.fillStyle="#F5E2B4"; x.fillText(p.gz[i],cx,520);
+    sans(24); x.fillStyle="#E8D6AE"; x.fillText(p.shiShenTg[i],cx,576);
+    sans(19); x.fillStyle="#8D8574"; x.fillText(p.nayin[i],cx,620);
+  }
+  /* 属性面板 */
+  var y0=716;
+  x.textAlign="left"; sans(26); x.fillStyle="#C9BC9C"; x.fillText("属性面板 · 五行强弱",80,y0);
+  g.panel.forEach(function(w,i){
+    var yy=y0+56+i*62;
+    sans(28); x.fillStyle="#E8D6AE"; x.fillText(w.elem,80,yy+8);
+    x.fillStyle="rgba(216,170,90,.14)"; x.fillRect(132,yy-14,770,20);
+    var grd=x.createLinearGradient(132,0,902,0); grd.addColorStop(0,"#B7873E"); grd.addColorStop(1,"#F0D48A");
+    x.fillStyle=grd; x.fillRect(132,yy-14,770*(w.val/5),20);
+    x.textAlign="right"; sans(28); x.fillStyle="#E8D6AE"; x.fillText(String(w.val),1000,yy+8);
+    x.textAlign="left";
+  });
+  /* 概览 */
+  var y=ysShow(p);
+  var facts=[["格局",p.ge],["用神",y.ys],["喜神",y.xs],["忌神",y.js],["起运",p.qiYun],["神煞",p.shenSha.join(" · ")||"—"]];
+  var fy=1118;
+  facts.forEach(function(f,i){
+    var fx=80+(i%2)*470, ry=fy+((i/2)|0)*100;
+    x.fillStyle="rgba(6,4,10,.55)"; x.fillRect(fx,ry,450,86);
+    x.strokeStyle="rgba(216,170,90,.3)"; x.lineWidth=1; x.strokeRect(fx,ry,450,86);
+    sans(23); x.fillStyle="#9C8F76"; x.fillText(f[0],fx+24,ry+36);
+    serif(32); x.fillStyle="#F5E2B4"; x.fillText(String(f[1]),fx+24,ry+74);
+  });
+  sans(25); x.textAlign="center"; x.fillStyle="#8D8574";
+  x.fillText("xiuxing-world.beam.page · 符号推演,供自省与玩味,不构成命定断言",W/2,1452);
+  var url=c.toDataURL("image/png");
+  $("shmImg").src=url; $("shm").classList.add("on");
+  $("shmDl").onclick=function(){
+    var a=document.createElement("a"); a.href=url; a.download="修行世界·命格英雄卡.png";
+    document.body.appendChild(a); a.click(); a.remove();
+  };
+});
+$("shmClose").addEventListener("click",function(){$("shm").classList.remove("on")});
+$("shm").addEventListener("click",function(e){ if(e.target===this) this.classList.remove("on") });
+document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&$("shm"))$("shm").classList.remove("on") });
+
+/* ── 初始化 ───────────────────────────── */
+applyMode((document.querySelector('input[name="mode"]:checked')||{value:"normal"}).value);
+paintQuota();
+})();
+</script>
+</body>
+</html>
