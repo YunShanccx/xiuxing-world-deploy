@@ -452,6 +452,7 @@ transition:color .3s;line-height:1.3;text-align:center}
 .skill b i{font-style:normal;font-size:12.5px;color:var(--gold);margin-left:8px;font-family:var(--sans);letter-spacing:0}
 .skill p{margin-top:7px;font-size:13px;color:var(--dim);line-height:1.7}
 .rows{margin-top:14px;display:grid;gap:8px}
+.rows.two{grid-template-columns:1fr 1fr}
 .rowIt{display:grid;grid-template-columns:auto auto 1fr;gap:11px;align-items:baseline;
   background:rgba(8,5,10,.55);border:1px solid rgba(216,170,90,.14);border-radius:10px;padding:9px 12px;
   font-size:13.5px;color:var(--dim)}
@@ -469,6 +470,8 @@ transition:color .3s;line-height:1.3;text-align:center}
 .fine{max-width:36em;margin:18px auto 0;text-align:center;font-size:13px;color:#8D8574;line-height:2}
 @media(max-width:560px){
   .topnav .grp a{display:none}
+  .topnav .grp .btnPrim{display:none}   /* 手机端首屏只留一个动作: hero 主 CTA */
+  .rows.two{grid-template-columns:1fr}
   .sixGrid{grid-template-columns:1fr 1fr;gap:10px}
   .sixCell{padding:15px 13px 17px}
   .sixCell b{font-size:16px}
@@ -743,15 +746,14 @@ transition:color .3s;line-height:1.3;text-align:center}
     <div class="grid2" id="rSkills" style="margin-top:14px"></div>
   </div>
 
-  <div class="grid2">
-    <div class="card" style="margin-top:14px">
-      <span class="pnum">心魔副本</span>
-      <div class="rows" id="rMo"></div>
-    </div>
-    <div class="card" style="margin-top:14px">
-      <span class="pnum">赛季 · 大运</span>
-      <div class="rows" id="rDaYun"></div>
-    </div>
+  <div class="card" style="margin-top:14px">
+    <span class="pnum">心魔副本 · 两道关卡</span>
+    <div class="rows two" id="rMo"></div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <span class="pnum">赛季 · 大运八步</span>
+    <div class="rows" id="rDaYun"></div>
   </div>
 
   <div class="card" style="margin-top:14px">
@@ -971,6 +973,7 @@ function check(from,to){
   }
   return "";
 }
+function showNav(v){var nv=document.querySelector(".nav"); if(nv)nv.classList.toggle("hide",!v);}
 $("next").addEventListener("click",function(){var nx=SEQ[SEQ.indexOf(cur)+1];if(nx!==undefined)goto(nx)});
 $("back").addEventListener("click",function(){var pv=SEQ[SEQ.indexOf(cur)-1];if(pv!==undefined)goto(pv,true)});
 Array.prototype.forEach.call($("steps").querySelectorAll("button"),function(b){
@@ -1005,7 +1008,7 @@ $("go").addEventListener("click",function(){
     if(chart) showResult(chart,Paipan.gameFields(chart),payload);
     else showLocalFail(failMsg);
     /* 收起全部步骤面板: 无论 fit 何时被触发,舞台都只会得 0 */
-    $("next").style.display="none"; $("back").classList.add("hide");
+    $("next").style.display="none"; $("back").classList.add("hide"); showNav(false);
     Array.prototype.forEach.call(stage.querySelectorAll(".panel.on"),function(p){p.classList.remove("on")});
     stage.style.height="0px";
     var dc=$("doneCard"); dc.style.display="block"; dc.classList.add("show");
@@ -1288,7 +1291,8 @@ $("mail").addEventListener("input",function(){
 });
 
 /* ── 跳转按钮 ─────────────────────────── */
-qa("[data-jump]").forEach(function(b){ b.addEventListener("click",function(){scrollTo(b.dataset.jump)}) });
+qa("[data-jump]").forEach(function(b){ b.addEventListener("click",function(){scrollTo(b.dataset.jump); showNav(true); }) });
+showNav(false);   /* 落地页: 没进天机阁就不露步骤条 */
 
 /* ── 06 · 命格生成动画 ────────────────── */
 function playGen(chart,cb){
@@ -1398,7 +1402,7 @@ $("btnAgain").addEventListener("click",function(){
   Array.prototype.forEach.call(stage.querySelectorAll(".panel"),function(p){p.classList.remove("on")});
   var first=SEQ[0]; cur=first; $("p"+first).classList.add("on");
   var btn=$("go"); btn.disabled=false; btn.textContent="唤醒我的英雄卡";
-  paintSteps(); fit(); scrollTo("#tjg");
+  paintSteps(); fit(); showNav(true); scrollTo("#tjg");
 });
 
 /* ── 分享图 (1080×1520, 手机长按保存) ── */
