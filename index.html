@@ -739,7 +739,10 @@ transition:color .3s;line-height:1.3;text-align:center}
     <div class="acts">
       <button class="pri" type="button" id="btnShare">保存分享图</button>
       <button type="button" id="btnAgain">再推一次</button>
+      <button type="button" id="btnLink">复制我的推演链接</button>
+      <button type="button" id="btnForget" style="display:none">清除存档</button>
     </div>
+    <p class="note" style="margin-top:10px">推演链接里只有生辰、性别和排法(没有名号、没有邮箱):自己收藏,或发给想给的人;别发到公开群里。</p>
   </div>
 
   <div class="card" style="margin-top:14px">
@@ -996,30 +999,8 @@ $("go").addEventListener("click",function(){
   }
   var btn=$("go"); btn.disabled=true; btn.textContent="入盘中……";
   $("load").classList.add("on");
-  if(window.xx_lock)xx_lock();   /* 机关咔哒锁死 */
 
-  var payload=buildPayload(mail), chart=null, failMsg="";
-  try{
-    if(typeof Paipan==="undefined"||!Paipan.paipan) throw new Error("排盘引擎没加载上");
-    chart=Paipan.paipan(toInput(payload));
-  }catch(e){ failMsg=(e&&e.message)||String(e) }
-
-  playGen(chart,function(){
-    $("load").classList.remove("on");
-    if(chart) showResult(chart,Paipan.gameFields(chart),payload);
-    else showLocalFail(failMsg);
-    /* 收起全部步骤面板: 无论 fit 何时被触发,舞台都只会得 0 */
-    $("next").style.display="none"; $("back").classList.add("hide"); showNav(false);
-    Array.prototype.forEach.call(stage.querySelectorAll(".panel.on"),function(p){p.classList.remove("on")});
-    stage.style.height="0px";
-    var dc=$("doneCard"); dc.style.display="block"; dc.classList.add("show");
-    $("doneTxt").innerHTML='<span class="strong">生辰已入盘</span>'+
-      "命盘已在下面展开;完整文案卡炼成后,第二封飞往 <b>"+mail.replace(/[<>&]/g,"")+"</b>。<br>没收到就翻翻垃圾箱。";
-    if(window.xx_burst)xx_burst();
-    paintQuota();
-    sendMail(payload,mail);
-    if(!$("result").hidden) $("result").scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"});
-  });
+  whenEngine(function(){ launch(buildPayload(mail), mail) });
 });
 
 /* ── 尺寸同步 ───────────────────────── */
@@ -1293,7 +1274,13 @@ $("mail").addEventListener("input",function(){
 
 /* ── 跳转按钮 ─────────────────────────── */
 qa("[data-jump]").forEach(function(b){ b.addEventListener("click",function(){scrollTo(b.dataset.jump); showNav(true); }) });
-showNav(false);   /* 落地页: 没进天机阁就不露步骤条 */
+/* 步骤条跟表单走: 自己滚到排盘区也给按钮(不只认 CTA); 出盘后 navDone 就不再露 */
+var navDone=false;
+function navSync(v){ if(!navDone) showNav(v) }
+showNav(false);
+if("IntersectionObserver" in window){
+  new IntersectionObserver(function(en){ navSync(en[0].isIntersecting) },{threshold:.15}).observe($("stage"));
+}
 
 /* ── 06 · 命格生成动画 ────────────────── */
 function playGen(chart,cb){
@@ -1403,7 +1390,7 @@ $("btnAgain").addEventListener("click",function(){
   Array.prototype.forEach.call(stage.querySelectorAll(".panel"),function(p){p.classList.remove("on")});
   var first=SEQ[0]; cur=first; $("p"+first).classList.add("on");
   var btn=$("go"); btn.disabled=false; btn.textContent="唤醒我的英雄卡";
-  paintSteps(); fit(); showNav(true); scrollTo("#tjg");
+  navDone=false; paintSteps(); fit(); showNav(true); scrollTo("#tjg");
 });
 
 /* ── 分享图 (1080×1520, 手机长按保存) ── */
@@ -1477,9 +1464,144 @@ $("shmClose").addEventListener("click",function(){$("shm").classList.remove("on"
 $("shm").addEventListener("click",function(e){ if(e.target===this) this.classList.remove("on") });
 document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&$("shm"))$("shm").classList.remove("on") });
 
+/* ── 存档 + 推演链接 ─────────────────── */
+var CK="xx_card_v1";
+function saveCard(f){
+  try{
+    localStorage.setItem(CK,JSON.stringify({birth:f.birth,sex:f.sex,cal:f.cal,leap:f.leap,
+      school:f.school,lon:f.lon,city:f.city,name:f.name,mode:radio("mode"),at:Date.now()}));
+  }catch(e){}
+}
+function loadCard(){ try{ var c=JSON.parse(localStorage.getItem(CK)||"null"); return (c&&c.birth)?c:null }catch(e){ return null } }
+function clearCard(){ try{ localStorage.removeItem(CK) }catch(e){} }
+
+function setRadio(n,v){
+  var el=document.querySelector('input[name="'+n+'"][value="'+v+'"]');
+  if(!el) return false;
+  el.checked=true; el.dispatchEvent(new Event("change",{bubbles:true})); return true;
+}
+function fillForm(f){
+  var b=String(f.birth||"").split("T");
+  $("bd").value=b[0]||""; $("bt").value=b[1]||"00:00";
+  setRadio("sex", f.sex==="female"?"female":"male");
+  setRadio("cal", f.cal==="lunar"?"lunar":"solar");
+  setRadio("leap", f.leap?"1":"0");
+  var sc=String(f.school||"lichun,today,bjt,jieqi").split(",");
+  setRadio("yearBound",sc[0]||"lichun"); setRadio("ziTime",sc[1]||"today");
+  setRadio("tz",sc[2]||"bjt"); setRadio("monthRule",sc[3]||"jieqi");
+  $("city").value=f.city||"";
+  if(f.mode) setRadio("mode", f.mode==="pro"?"pro":"normal");
+  if(f.name){ $("nmOn").checked=true; $("nmOn").dispatchEvent(new Event("change",{bubbles:true}));
+              $("nm").value=f.name; paintName(); }
+  toggleCond(); fit();
+}
+function linkOf(f){
+  var b=String(f.birth||"").split("T");
+  var bd=(b[0]||"").replace(/[^0-9]/g,""), h=(b[1]||"00:00").replace(/[^0-9]/g,"");
+  var q="b="+bd+"&h="+h+"&g="+(f.sex==="female"?"f":"m")+"&c="+(f.cal==="lunar"?"1":"0")+
+        "&lp="+(f.leap?1:0)+"&m="+(radio("mode")==="pro"?1:0)+
+        "&s="+encodeURIComponent(String(f.school||"lichun,today,bjt,jieqi").replace(/,/g,"|"));
+  if(/(^|,)ts(,|$)/.test(String(f.school||""))&&f.city){
+    q+="&lon="+encodeURIComponent(f.lon)+"&city="+encodeURIComponent(f.city);
+  }
+  return location.origin+location.pathname+"?"+q;
+}
+function fromLink(){
+  var p;
+  try{ p=new URLSearchParams(location.search) }catch(e){ return null }
+  var b=p.get("b"); if(!b||!/^[0-9]{8}$/.test(b)) return null;
+  var h=p.get("h")||""; if(!/^[0-9]{1,4}$/.test(h)) return null;
+  h=("0000"+h).slice(-4);
+  var hh=+h.slice(0,2), mm=+h.slice(2); if(hh>23||mm>59) return null;
+  var f={birth:b.slice(0,4)+"-"+b.slice(4,6)+"-"+b.slice(6,8)+"T"+h.slice(0,2)+":"+h.slice(2),
+    sex:p.get("g")==="f"?"female":"male",
+    cal:p.get("c")==="1"?"lunar":"solar",
+    leap:p.get("lp")==="1",
+    school:(p.get("s")||"lichun|today|bjt|jieqi").replace(/\|/g,","),
+    mode:(p.get("m")==="1"?"pro":"normal"),
+    lon:parseFloat(p.get("lon"))||120,
+    city:p.get("city")||"",
+    name:""};
+  /* 生辰不合法就整条丢掉, 回落到正常首页, 不白屏 */
+  try{
+    if(typeof Paipan==="undefined"||!Paipan.paipan) return null;
+    var c=Paipan.paipan(toInput(f));
+    if(!c||!c.gz||c.gz.length!==4) return null;
+  }catch(e){ return null }
+  return f;
+}
+
+/* 排盘 → 动画 → 结果页; 有邮箱才发信才占次数 */
+function launch(payload, mail, note){
+  var chart=null, failMsg="";
+  try{
+    if(typeof Paipan==="undefined"||!Paipan.paipan) throw new Error("排盘引擎没加载上");
+    chart=Paipan.paipan(toInput(payload));
+  }catch(e){ failMsg=(e&&e.message)||String(e) }
+  if(window.xx_lock)xx_lock();   /* 机关咔哒锁死 */
+  playGen(chart,function(){
+    $("load").classList.remove("on");
+    if(chart){ showResult(chart,Paipan.gameFields(chart),payload); if(mail) saveCard(payload); }
+    else showLocalFail(failMsg);
+    /* 收起全部步骤面板: 无论 fit 何时被触发,舞台就都只会得 0 */
+    $("next").style.display="none"; $("back").classList.add("hide"); navDone=true; showNav(false);
+    Array.prototype.forEach.call(stage.querySelectorAll(".panel.on"),function(p){p.classList.remove("on")});
+    stage.style.height="0px";
+    var dc=$("doneCard"); dc.style.display="block"; dc.classList.add("show");
+    if(mail){
+      $("doneTxt").innerHTML='<span class="strong">生辰已入盘</span>'+
+        "命盘已在下面展开;完整文案卡炼成后,第二封飞往 <b>"+mail.replace(/[<>&]/g,"")+"</b>。<br>没收到就翻翻垃圾箱。";
+      paintQuota();
+      sendMail(payload,mail);
+    }else{
+      $("doneTxt").innerHTML=note||'<span class="strong">生辰已入盘</span>本机当场排盘,没发邮件、不占次数。';
+      setStat("ok","<b>本机即时排盘</b><br>没发邮件 · 不占每日次数;填邮箱再推一次,才会寄英雄卡邮件");
+    }
+    $("btnForget").style.display=loadCard()?"":"none";
+    if(window.xx_burst)xx_burst();
+    if(!$("result").hidden) $("result").scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"});
+  });
+}
+
+/* 结果页: 复制推演链接 / 清除存档 */
+$("btnLink").addEventListener("click",function(){
+  if(!payloadCache) return;
+  var url=linkOf(payloadCache), btn=this;
+  function ok(){ btn.textContent="链接已复制"; setTimeout(function(){ btn.textContent="复制我的推演链接" },2200) }
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(ok,function(){ window.prompt("长按复制这个链接",url) });
+  }else{ window.prompt("长按复制这个链接",url) }
+});
+$("btnForget").addEventListener("click",function(){ clearCard(); this.textContent="存档已清除"; this.style.display="none" });
+
 /* ── 初始化 ───────────────────────────── */
 applyMode((document.querySelector('input[name="mode"]:checked')||{value:"normal"}).value);
 paintQuota();
+
+/* 打开即推演: 分享链接优先, 其次本机存档 —— 两条路都不发邮件、不占次数。
+   排盘引擎是 defer 加载的, 主脚本跑到这里时它还没到, 先等它。 */
+function whenEngine(cb){
+  if(typeof Paipan!=="undefined"&&Paipan.paipan) return cb();
+  var n=0, iv=setInterval(function(){
+    n++;
+    if(typeof Paipan!=="undefined"&&Paipan.paipan){ clearInterval(iv); cb() }
+    else if(n>60){ clearInterval(iv); cb() }   /* 6 秒还没来也交给 launch, 它会诚实报错 */
+  },100);
+}
+whenEngine(function autoGo(){
+  var f=null, src="", lf=fromLink();
+  if(lf){ f=lf; src="link" }
+  else{ var c=loadCard(); if(c){ f=c; src="archive" } }
+  if(!f) return;
+  try{ fillForm(f) }catch(e){ return }
+  $("load").classList.add("on"); $("go").disabled=true; $("go").textContent="入盘中……";
+  launch(buildPayload(""), null, src==="link"
+    ? '<span class="strong">这是分享链接里的命格</span>'+
+      "生辰在链接上,已经在你这台设备当场排出来 —— 没发邮件、不占次数。<br>想算你自己的,点下面「再推一次」。<br>"+
+      '<span style="color:#8d8574">链接里含生辰,只发给想发的人,别发到公开群里。</span>'
+    : '<span class="strong">这是你上次推演的卡</span>'+
+      "存在这台设备上,回来直接接着看;没发邮件、不占次数。<br>想重算点「再推一次」,不想留了点「清除存档」。");
+});
 })();
 </script>
 </body>
