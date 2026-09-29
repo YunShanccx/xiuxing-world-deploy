@@ -522,6 +522,12 @@ transition:color .3s;line-height:1.3;text-align:center}
 .at .abar{height:7px;background:rgba(200,169,107,.14);border-radius:4px;overflow:hidden}
 .at .abar i{display:block;height:100%;background:linear-gradient(90deg,#8F7440,#C8A96B)}
 .at b{color:#D8BD7A;font-size:15px;text-align:right;font-weight:600}
+.fbAttrs{display:grid;gap:8px}
+.fbat{display:grid;grid-template-columns:44px 1fr 38px;gap:10px;align-items:center}
+.fbat span{color:#C9C3B4;font-size:12.5px;letter-spacing:.16em}
+.fbat .fbar{height:5px;background:rgba(200,169,107,.14);border-radius:3px;overflow:hidden}
+.fbat .fbar i{display:block;height:100%;background:linear-gradient(90deg,#8F7440,#C8A96B)}
+.fbat b{color:#D8BD7A;font-size:13.5px;text-align:right;font-weight:500}
 .fcFoot{margin-top:24px;padding-top:16px;border-top:1px dashed rgba(200,169,107,.28);display:flex;justify-content:space-between;align-items:baseline}
 .fcFoot em{font-style:normal;color:var(--dim);font-size:12.5px;letter-spacing:.2em}
 .fcFoot em:first-child{color:#C8A96B}
@@ -844,6 +850,7 @@ button.pri:active{transform:translateY(1px)}
         <div class="fbBlk"><em>核心优势</em><p id="fbTalent"></p></div>
         <div class="fbBlk"><em>容易失衡的地方</em><p id="fbBlind"></p></div>
         <div class="fbBlk"><em>修行方向</em><p id="fbDir"></p><p class="fbToday" id="fbToday"></p></div>
+        <div class="fbBlk"><em>六项属性</em><div class="fbAttrs" id="fbAttrs"></div></div>
         <button class="ghost" type="button" id="btnHidden">揭示隐藏天赋</button>
         <div class="hiddenBox" id="hiddenBox" style="display:none"></div>
       </div>
@@ -1624,11 +1631,14 @@ function paintFate(F,p,g,f){
   $("fcTotem").innerHTML=totemSVG(F.xiang.name);
   $("fcPersona").textContent=F.persona;
   $("fcKeys").textContent=F.keywords.join(" · ");
-  $("fcAttrs").innerHTML=F.attrList.map(function(a){
+  $("fcAttrs").innerHTML=F.attrList.slice(0,4).map(function(a){
     return '<div class="at"><span>'+a[0]+'</span><span class="abar"><i style="width:'+a[1]+'%"></i></span><b>'+a[1]+'</b></div>';
   }).join("");
   $("fcCode").textContent=F.code;
   $("fcLv").textContent=F.level;
+  $("fbAttrs").innerHTML=F.attrList.map(function(a){
+    return '<div class="fbat"><span>'+a[0]+'</span><span class="fbar"><i style="width:'+a[1]+'%"></i></span><b>'+a[1]+'</b></div>';
+  }).join("");
   $("fbName").innerHTML=esc(F.xiang.name)+" · "+esc(F.persona)+(F.xiang.line?'<p class="fbLine">'+esc(F.xiang.line)+'</p>':"");
   $("fbTalent").textContent=F.talents.slice(0,2).join(" ");
   $("fbBlind").innerHTML='<b>'+esc(F.blind.title)+'。</b>'+esc(F.blind.desc);
