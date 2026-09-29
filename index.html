@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#08090D">
 <title>天机阁 · 命格英雄卡推演</title>
+<meta name="description" content="天机阁 · 修行世界：输入出生信息，唤醒属于你的东方命格 —— 八字、五行、人格原型、核心天赋、修行方向与命格英雄卡，传统文化 × AI 自我探索。">
 <script defer src="/lunar.js"></script>
 <script defer src="/paipan.js"></script>
 <script defer src="/fate.js"></script>
@@ -563,6 +564,16 @@ transition:color .3s;line-height:1.3;text-align:center}
 .saveRow input{flex:1 1 220px;min-width:0}
 .saveRow button{min-height:48px}
 @media(max-width:480px){.ringRow{gap:16px}.fcFace{padding:26px 18px 22px}}
+
+button.pri{background:linear-gradient(180deg,#F2D893,#D8A85A);color:#170D05;border:none;border-radius:999px;font-weight:700;letter-spacing:.1em;padding:14px 28px;min-height:48px;font-size:15.5px;cursor:pointer;font-family:inherit}
+button.pri:hover{filter:brightness(1.05)}
+button.pri:active{transform:translateY(1px)}
+.fcBtns button.pri{padding:12px 30px;min-height:46px;font-size:14.5px;letter-spacing:.14em}
+.fcAttrs::before{content:"核 心 属 性";display:block;font-size:11px;letter-spacing:.4em;color:var(--dim);margin-bottom:6px}
+.at b{font-weight:500;font-size:14.5px}
+.fcXiangSub{color:#B9AE97}
+#btnHidden{border-color:rgba(200,169,107,.75);color:#F0E6D2;min-height:48px}
+@media(max-width:1400px){.mech{display:none}}
 </style>
 </head>
 <body>
@@ -597,14 +608,14 @@ transition:color .3s;line-height:1.3;text-align:center}
 <section class="lg rv" id="six">
   <div class="kicker">一 次 推 演</div>
   <h2 class="big">一次推演，看见六个自己</h2>
-  <p class="lead">生辰是钥匙。同一份八字在天机阁里拆成六张脸,每一张都由排盘算出来,不是模板。</p>
+  <p class="lead">生辰是钥匙。同一份八字在天机阁里拆成六张脸，每一张都由排盘算出来，不是模板。</p>
   <div class="sixGrid">
-    <div class="sixCell"><u>壹</u><b>命格</b><i>四象定你的底色:玄武、青龙、白虎还是朱雀,先沉住还是先出手。</i></div>
-    <div class="sixCell"><u>贰</u><b>五行</b><i>木火土金水各占多少,哪条旺哪条虚,一眼看清能量结构。</i></div>
-    <div class="sixCell"><u>叁</u><b>性格</b><i>人格原型给出你的行事底色:谋士、游侠、隐士还是开拓者。</i></div>
+    <div class="sixCell"><u>壹</u><b>命格</b><i>四象定你的底色：玄武、青龙、白虎还是朱雀，先沉住还是先出手。</i></div>
+    <div class="sixCell"><u>贰</u><b>五行</b><i>木火土金水各占多少，哪条旺哪条虚，一眼看清能量结构。</i></div>
+    <div class="sixCell"><u>叁</u><b>性格</b><i>人格原型给出你的行事底色：谋士、游侠、隐士还是开拓者。</i></div>
     <div class="sixCell"><u>肆</u><b>天赋</b><i>洞察、行动、意志、判断、适应、创造——你最锋利的三把刀。</i></div>
-    <div class="sixCell"><u>伍</u><b>人生阶段</b><i>大运十年一换,流年一年一换,你在第几季、接下来怎么走。</i></div>
-    <div class="sixCell"><u>陆</u><b>修行方向</b><i>把命理结论落回每天怎么活:一个方向,一件今天就能做的小事。</i></div>
+    <div class="sixCell"><u>伍</u><b>人生阶段</b><i>大运十年一换，流年一年一换，你在第几季、接下来怎么走。</i></div>
+    <div class="sixCell"><u>陆</u><b>修行方向</b><i>把命理结论落回每天怎么活：一个方向，一件今天就能做的小事。</i></div>
   </div>
 </section>
 
@@ -640,7 +651,7 @@ transition:color .3s;line-height:1.3;text-align:center}
       <div><em>起运</em><b>3年0个月</b></div>
       <div><em>神煞</em><b>桃花 · 将星</b></div>
     </div>
-    <p class="note">上面是同一次推演的结构输出。完整卡还会写出技能组、心魔副本、八个赛季与未来八年流年,直接飞进你的邮箱。</p>
+    <p class="note">上面是同一次推演的结构输出。完整卡还会写出技能组、心魔副本、八个赛季与未来八年流年，直接飞进你的邮箱。</p>
   </div>
   <div class="ctaBox"><button class="btnPrim" type="button" data-jump="#tjg">🔮 唤醒我的命格</button></div>
 </section>
@@ -649,7 +660,7 @@ transition:color .3s;line-height:1.3;text-align:center}
 <section class="lg rv" id="ctas">
   <div class="kicker">下 一 步</div>
   <h2 class="big">开始你的命格推演</h2>
-  <p class="lead">报上生辰,剩下的交给天机阁。</p>
+  <p class="lead">报上生辰，剩下的交给天机阁。</p>
   <div class="ctaBox">
     <button class="btnPrim" type="button" data-jump="#tjg">开始推演</button>
     <p>推荐填公历生日 · 时辰不确定就先填 12:00</p>
@@ -659,9 +670,9 @@ transition:color .3s;line-height:1.3;text-align:center}
 <!-- 04 · 开始推演后的生辰输入 -->
 <header class="hd2" id="tjg">
   <h2>天机阁</h2>
-  <p class="sub">入阁先报生辰 · 命格英雄卡推演既毕,直投你的邮箱</p>
+  <p class="sub">入阁先报生辰 · 命格英雄卡推演既毕，直投你的邮箱</p>
   <div class="seg modeseg" id="modeSeg"><i class="ink"></i><label><input type="radio" name="mode" value="normal" checked><span>普通</span></label><label><input type="radio" name="mode" value="pro"><span>专业 · 16 种排法</span></label></div>
-  <p class="modeHint" id="modeHint">普通:按最主流的推荐参数直接排。</p>
+  <p class="modeHint" id="modeHint">普通：按最主流的推荐参数直接排。</p>
 </header>
 
 <ol class="steps rv" id="steps" aria-label="推演进度">
@@ -679,7 +690,7 @@ transition:color .3s;line-height:1.3;text-align:center}
       <div class="ptop">
         <span class="pnum">第一步 · 生辰</span>
         <h2 id="h0" tabindex="-1">你来到世界的那一刻</h2>
-        <p class="phint">这一格定你的命盘底色。填得越准,后面的推演越贴你。</p>
+        <p class="phint">这一格定你的命盘底色。填得越准，后面的推演越贴你。</p>
       </div>
       <div class="pbody">
         <div class="g2">
@@ -689,7 +700,7 @@ transition:color .3s;line-height:1.3;text-align:center}
           </div>
           <div>
             <div class="lab">出生城市 · 用你头顶的太阳定时刻</div>
-            <input type="text" id="city" list="cityList" placeholder="输入城市名,如:洛阳" autocomplete="off">
+            <input type="text" id="city" list="cityList" placeholder="输入城市名，如：洛阳" autocomplete="off">
             <datalist id="cityList"></datalist>
             <div class="lab cityHint" id="cityHint"></div>
           </div>
@@ -700,7 +711,7 @@ transition:color .3s;line-height:1.3;text-align:center}
           <input type="time" id="bt" value="00:00" aria-label="出生时间">
         </div>
         <details class="adv" id="adv0">
-          <summary>⚙️ 专业排盘设置 · 默认已按推荐排法,不用动</summary>
+          <summary>⚙️ 专业排盘设置 · 默认已按推荐排法，不用动</summary>
           <div class="lab">纪年 · 你记的是哪种日子</div>
           <div class="seg"><i class="ink"></i><label><input type="radio" name="cal" value="solar" checked><span>公历 · 阳历<i class="rec">推荐</i></span></label><label><input type="radio" name="cal" value="lunar"><span>农历 · 黄历</span></label></div>
           <div id="leapWrap" style="display:none">
@@ -718,8 +729,8 @@ transition:color .3s;line-height:1.3;text-align:center}
     <div class="card">
       <div class="ptop">
         <span class="pnum">专业 · 流派</span>
-        <h2 id="h1h" tabindex="-1">16 种排法,选你信的那个</h2>
-        <p class="phint">从第一步的「⚙️ 专业排盘设置」进来。带「推荐」的是当前最主流、最精准的排法;拿不准就保持默认,返回上一步照样能推。</p>
+        <h2 id="h1h" tabindex="-1">16 种排法，选你信的那个</h2>
+        <p class="phint">从第一步的「⚙️ 专业排盘设置」进来。带「推荐」的是当前最主流、最精准的排法；拿不准就保持默认，返回上一步照样能推。</p>
       </div>
       <div class="pbody">
         <div class="g2">
@@ -750,13 +761,13 @@ transition:color .3s;line-height:1.3;text-align:center}
       <div class="ptop">
         <span class="pnum">第三步 · 名号</span>
         <h2 id="h2h" tabindex="-1">卡上刻什么名字</h2>
-        <p class="phint">名号会送去做姓名学推演:五格数理、三才配置、字的五行喜用,和你的命盘并在一起看。开关在下面,不开就只推命盘。</p>
+        <p class="phint">名号会送去做姓名学推演：五格数理、三才配置、字的五行喜用，和你的命盘并在一起看。开关在下面，不开就只推命盘。</p>
       </div>
       <div class="pbody">
-        <label class="chk"><input type="checkbox" id="nmOn"><span><b>姓名五格分析 · 可选</b><i>勾上才填名号——五格三才、字的五行,和命盘一起推;不勾就只推命盘</i></span></label>
+        <label class="chk"><input type="checkbox" id="nmOn"><span><b>姓名五格分析 · 可选</b><i>勾上才填名号——五格三才、字的五行，和命盘一起推；不勾就只推命盘</i></span></label>
         <div id="nmBox" style="display:none">
           <div class="lab">名号 · 2—6 个汉字</div>
-          <input type="text" id="nm" maxlength="6" placeholder="如:李白" autocomplete="off">
+          <input type="text" id="nm" maxlength="6" placeholder="如：李白" autocomplete="off">
           <div class="counter" id="nmHint">填 2—6 个汉字</div>
         </div>
       </div>
@@ -769,14 +780,14 @@ transition:color .3s;line-height:1.3;text-align:center}
       <div class="ptop">
         <span class="pnum">第四步 · 入盘</span>
         <h2 id="h3h" tabindex="-1">最后一步 · 唤醒你的命格</h2>
-        <p class="phint">邮箱选填 —— 不留也能当场出卡。留了:先收到一封「当前排位」,完整卡炼成后第二封飞过去。</p>
+        <p class="phint">邮箱选填 —— 不留也能当场出卡。留了：先收到一封「当前排位」，完整卡炼成后第二封飞过去。</p>
       </div>
       <div class="pbody">
         <div class="lab">收卡邮箱 · 选填</div>
         <input type="email" id="mail" placeholder="你的邮箱 · 收卡用" autocomplete="email" aria-describedby="merr mailnote">
-              <div id="mailnote" class="lab" style="margin-top:10px;color:#8d8574;font-size:12.5px">邮箱仅用于发送排位与英雄卡,不作他用</div>
+              <div id="mailnote" class="lab" style="margin-top:10px;color:#8d8574;font-size:12.5px">邮箱仅用于发送排位与英雄卡，不作他用</div>
         <div id="merr"></div>
-        <div class="lab" id="quota" style="margin-top:24px;color:#C9BC9C">命签每日有限:每台设备、每个邮箱各 3 次</div>
+        <div class="lab" id="quota" style="margin-top:24px;color:#C9BC9C">命签每日有限：每台设备、每个邮箱各 3 次</div>
         <button class="go" id="go">唤醒我的英雄卡</button>
         <div class="load" id="load">入盘中……</div>
       </div>
@@ -856,7 +867,7 @@ transition:color .3s;line-height:1.3;text-align:center}
   <!-- 邮箱后置 · 保存完整卡 -->
   <div class="card" id="saveCard" style="margin-top:14px;display:none">
     <span class="pnum">保存你的命格英雄卡</span>
-    <p class="note">卡就在上面 —— 不留邮箱,这些照样看。留个邮箱,把完整版(含流年、技能组、心魔副本)也寄给你:一封排位提醒,一封完整卡。</p>
+    <p class="note">卡就在上面 —— 不留邮箱，这些照样看。留个邮箱，把完整版(含流年、技能组、心魔副本)也寄给你：一封排位提醒，一封完整卡。</p>
     <div class="saveRow"><input type="email" id="saveMail" placeholder="你的邮箱" autocomplete="email"><button class="pri" type="button" id="btnSaveMail">寄完整卡</button></div>
     <p class="note" id="saveNote" style="margin-top:8px"></p>
   </div>
@@ -864,11 +875,11 @@ transition:color .3s;line-height:1.3;text-align:center}
   <!-- 08 · AI 命格师 -->
   <div class="card" id="aiCard" style="margin-top:14px;display:none">
     <span class="pnum">AI 命格师 · 继续问下去</span>
-    <p class="aiLead">你的命格已经觉醒。现在,你可以继续问它。</p>
+    <p class="aiLead">你的命格已经觉醒。现在，你可以继续问它。</p>
     <div class="aiChips" id="aiChips"></div>
-    <textarea id="aiQ" rows="3" placeholder="问点具体的:我最大的优势是什么？为什么我容易想太多？"></textarea>
+    <textarea id="aiQ" rows="3" placeholder="问点具体的：我最大的优势是什么？为什么我容易想太多？"></textarea>
     <div class="acts"><button class="pri" type="button" id="btnAsk">把问题寄给命格师</button></div>
-    <p class="note" id="aiNote">问题会连同你的命格、五行、人格原型、六项属性、核心天赋与容易失衡的地方一起送出,答案从邮箱回来。只谈传统文化、自我观察与行为建议 —— 不做诊断,不许诺命运。</p>
+    <p class="note" id="aiNote">问题会连同你的命格、五行、人格原型、六项属性、核心天赋与容易失衡的地方一起送出，答案从邮箱回来。只谈传统文化、自我观察与行为建议 —— 不做诊断，不许诺命运。</p>
   </div>
 
   <div class="card" id="chartCard" style="margin-top:14px">
@@ -884,7 +895,7 @@ transition:color .3s;line-height:1.3;text-align:center}
       <button type="button" id="btnLink">复制我的推演链接</button>
       <button type="button" id="btnForget" style="display:none">清除存档</button>
     </div>
-    <p class="note" style="margin-top:10px">推演链接里只有生辰、性别和排法(没有名号、没有邮箱):自己收藏,或发给想给的人;别发到公开群里。</p>
+    <p class="note" style="margin-top:10px">推演链接里只有生辰、性别和排法(没有名号、没有邮箱)：自己收藏，或发给想给的人；别发到公开群里。</p>
   </div>
 
   <div class="card" style="margin-top:14px">
@@ -909,7 +920,7 @@ transition:color .3s;line-height:1.3;text-align:center}
 
   <div class="card" style="margin-top:14px">
     <span class="pnum">完整卡 · 走邮箱</span>
-    <p class="note" style="margin-top:6px">开场语、连招口诀、姓名签、觉醒任务线这些长文案,炼成后第二封飞往你的邮箱;第一封是排位提醒。两封都没到,先翻垃圾箱。</p>
+    <p class="note" style="margin-top:6px">开场语、连招口诀、姓名签、觉醒任务线这些长文案，炼成后第二封飞往你的邮箱；第一封是排位提醒。两封都没到，先翻垃圾箱。</p>
   </div>
 </section>
 
@@ -933,14 +944,14 @@ transition:color .3s;line-height:1.3;text-align:center}
     <span class="pnum">每日一条 · 按当日干支现算</span>
     <div class="todayBox" id="todayBox"></div>
   </div>
-  <p class="lead" style="margin-top:18px">不打卡,不排行,不做完也没有惩罚。每天一条,做完心里有数就行。</p>
+  <p class="lead" style="margin-top:18px">不打卡，不排行，不做完也没有惩罚。每天一条，做完心里有数就行。</p>
 </section>
 
 <!-- 10 · 修行世界介绍 -->
 <section class="lg rv" id="intro">
   <div class="kicker">关 于 修 行 世 界</div>
   <h2 class="big">东方人生系统</h2>
-  <p class="lead">八字、五行、大运、流年,是老祖宗留下的一套描述人生节奏的语言。修行世界把它翻译成你能玩起来的东西:一张卡、一排技能、两个心魔、八个赛季。</p>
+  <p class="lead">八字、五行、大运、流年，是老祖宗留下的一套描述人生节奏的语言。修行世界把它翻译成你能玩起来的东西：一张卡、一排技能、两个心魔、八个赛季。</p>
   <div class="ctaBox"><button class="btnPrim" type="button" data-jump="#tjg">进入天机阁</button></div>
 </section>
 
@@ -948,19 +959,19 @@ transition:color .3s;line-height:1.3;text-align:center}
 <section class="lg rv" id="disc">
   <div class="kicker">免 责 声 明</div>
   <h2 class="big">传统文化说明</h2>
-  <p class="fine">本产品内容源于传统文化与 AI 推演,仅供自我探索、文化体验与娱乐参考,不构成科学结论,也不构成医疗、法律、投资或其他专业建议。传统命理通常被理解为一种自我观察的角度,不是命定断言——请勿据此做出重大人生决策。生辰与邮箱仅用于生成本次推演,不作他用。</p>
+  <p class="fine">本产品内容源于传统文化与 AI 推演，仅供自我探索、文化体验与娱乐参考，不构成科学结论，也不构成医疗、法律、投资或其他专业建议。传统命理通常被理解为一种自我观察的角度，不是命定断言——请勿据此做出重大人生决策。生辰与邮箱仅用于生成本次推演，不作他用。</p>
 </section>
 
 <p class="foot rv">
   <span class="sigil">天 机 阁 · 修 行 世 界</span>
-  传统文化 · 自我探索 · 娱乐体验,不构成命定断言。<br>xiuxing-world.beam.page
+  传统文化 · 自我探索 · 娱乐体验，不构成命定断言。<br>xiuxing-world.beam.page
 </p>
 
 <!-- 分享图弹层 -->
 <div id="shm" role="dialog" aria-modal="true" aria-label="分享图">
   <div class="box">
     <img id="shmImg" alt="命格英雄卡分享图">
-    <p>手机:长按图片保存,再发朋友圈或群里。<br>电脑:点下面的按钮下载。</p>
+    <p>手机：长按图片保存，再发朋友圈或群里。<br>电脑：点下面的按钮下载。</p>
     <div class="acts">
       <button class="pri" type="button" id="shmDl">下载图片</button>
       <button type="button" id="shmClose">关闭</button>
@@ -1580,7 +1591,7 @@ function totemSVG(name){
     "白虎":'<path '+st+' d="M100 54 L152 146 L48 146 Z"/><path '+st+' d="M76 124 L124 124" opacity=".7"/><path '+st+' d="M86 104 L114 104" opacity=".7"/><path '+st+' d="M94 86 L106 86" opacity=".7"/><path '+st+' d="M100 146 L100 164" opacity=".6"/>',
     "朱雀":'<path '+st+' d="M100 52 L74 96"/><path '+st+' d="M100 52 L126 96"/><path '+st+' d="M74 96 C70 122 86 136 100 140 C114 136 130 122 126 96"/><path '+st+' d="M100 140 L100 166"/><path '+st+' d="M84 152 L100 160 L116 152" opacity=".7"/><circle cx="100" cy="60" r="5" fill="#C8A96B"/>'
   };
-  return '<svg viewBox="0 0 200 200" width="168" height="168" role="img" aria-label="'+name+'命格图腾">'+
+  return '<svg viewBox="0 0 200 200" role="img" aria-label="'+name+'命格图腾">'+
     '<circle cx="100" cy="100" r="92" fill="none" stroke="rgba(200,169,107,.35)" stroke-width="1"/>'+
     '<circle cx="100" cy="100" r="86" fill="none" stroke="rgba(200,169,107,.16)" stroke-width="1" stroke-dasharray="2 7"/>'+
     '<circle cx="100" cy="8" r="3" fill="#C8A96B"/><circle cx="192" cy="100" r="3" fill="#C8A96B"/>'+
@@ -1725,7 +1736,7 @@ $("btnShare").addEventListener("click",function(){
   /* 命格 + 人格原型 */
   serif(116); x.fillStyle="#F0E6D2"; x.fillText(F.xiang.name,W/2,330);
   var xe=XELE[F.xiang.name]||["",""];
-  sans(30); x.fillStyle="#C8A96B"; x.fillText(xe[0]+"方之象 · "+xe[1]+"命 · "+F.persona,W/2,386);
+  sans(30); x.fillStyle="#C8A96B"; x.fillText(xe[0]+"方之象 · "+xe[1]+"命",W/2,386);
   sans(26); x.fillStyle="#8A8F9C"; x.fillText(F.code+" · "+F.level,W/2,436);
   sans(26); x.fillStyle="#8A8F9C"; x.fillText("人 格 原 型",W/2,910);
   serif(72); x.fillStyle="#D8BD7A"; x.fillText(F.persona,W/2,996);
@@ -1748,9 +1759,9 @@ $("btnShare").addEventListener("click",function(){
   sans(28); x.fillStyle="#C9C3B4"; x.fillText(F.practice.today.slice(0,26),W/2,dy+146);
   if(F.practice.today.length>26) x.fillText(F.practice.today.slice(26,52),W/2,dy+190);
   /* 底部品牌 */
-  serif(46); x.fillStyle="#F0E6D2"; x.fillText("天机阁 · 修行世界",W/2,1790);
-  sans(30); x.fillStyle="#C8A96B"; x.fillText("xiuxing-world.beam.page",W/2,1848);
-  sans(22); x.fillStyle="#8A8F9C"; x.fillText("传统文化 × AI 推演 · 仅供自我探索与文化体验",W/2,1896);
+  serif(46); x.fillStyle="#F0E6D2"; x.fillText("天机阁 · 修行世界",W/2,1746);
+  sans(30); x.fillStyle="#C8A96B"; x.fillText("xiuxing-world.beam.page",W/2,1800);
+  sans(22); x.fillStyle="#8A8F9C"; x.fillText("传统文化 × AI 推演 · 仅供自我探索与文化体验",W/2,1846);
   function emit(){ var url=c.toDataURL("image/png");
     $("shmImg").src=url; $("shm").classList.add("on");
     $("shmDl").onclick=function(){ var a=document.createElement("a"); a.href=url; a.download="天机阁·命格英雄卡.png"; document.body.appendChild(a); a.click(); a.remove() };
