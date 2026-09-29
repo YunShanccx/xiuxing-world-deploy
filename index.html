@@ -345,7 +345,6 @@ transition:color .3s;line-height:1.3;text-align:center}
 .chk i{display:block;color:#B3A284;font-size:13px;font-style:normal;line-height:1.6;margin-top:3px}
 #nmBox{margin-top:18px}
 
-<style>
 /* ─────────────────────────────────────────────
    第一阶段 · 落地页 / 生成动画 / 结果页 / 分享
    规则照旧: 少即是多 —— 大标题、短文案、强视觉、一个明确动作
@@ -548,10 +547,10 @@ transition:color .3s;line-height:1.3;text-align:center}
 .ringRow{display:flex;gap:26px;align-items:center;margin-top:16px;flex-wrap:wrap;justify-content:center}
 .wxRing{width:230px;height:230px;max-width:70vw}
 .ringLegend{display:grid;gap:9px;min-width:190px}
-.lg{display:grid;grid-template-columns:14px 1fr auto;gap:12px;align-items:center}
-.lg i{width:12px;height:12px;border-radius:50%}
-.lg span{color:#C9C3B4;font-size:14px;letter-spacing:.2em}
-.lg b{color:#F0E6D2;font-size:15px}
+.lgd{display:grid;grid-template-columns:14px 1fr auto;gap:12px;align-items:center}
+.lgd i{width:12px;height:12px;border-radius:50%}
+.lgd span{color:#C9C3B4;font-size:14px;letter-spacing:.2em}
+.lgd b{color:#F0E6D2;font-size:15px}
 /* ── 核心天赋 ─────────────────────── */
 .talList{display:grid;gap:16px;margin-top:14px}
 .tal{display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:start}
@@ -1620,7 +1619,7 @@ function paintRing(wx){
   h+='<text x="110" y="132" text-anchor="middle" fill="#8A8F9C" font-size="13">最旺 '+wx[top]+'</text>';
   $("wxRing").innerHTML=h;
   $("ringLegend").innerHTML=keys.map(function(k){
-    return '<div class="lg"><i style="background:'+WXCOL[k]+'"></i><span>'+k+'</span><b>'+wx[k]+'</b></div>';
+    return '<div class="lgd"><i style="background:'+WXCOL[k]+'"></i><span>'+k+'</span><b>'+wx[k]+'</b></div>';
   }).join("")+'<p class="note" style="margin-top:10px">环按你盘里五行的实际力量分段 —— 越宽越旺,越窄越轻。旺的要会用,轻的不必硬补。</p>';
 }
 function paintFate(F,p,g,f){
