@@ -3,10 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#04050c">
+<meta name="theme-color" content="#08090D">
 <title>天机阁 · 命格英雄卡推演</title>
 <script defer src="/lunar.js"></script>
 <script defer src="/paipan.js"></script>
+<script defer src="/fate.js"></script>
 <script>document.documentElement.className="js";</script>
 <style>
 /* ─────────────────────────────────────────────
@@ -16,9 +17,9 @@
    装饰层全部慢速低透明, prefers-reduced-motion 一律静止
    ───────────────────────────────────────────── */
 :root{
-  --void:#030207; --deep:#0a0510; --ink:#150b16;
-  --fg:#F2EAD9; --dim:#BCAB8E; --faint:#A8977E;
-  --acc:#D8B36A; --gold:#E9C46A; --danger:#FF8F93;
+  --void:#08090D; --deep:#0D1017; --ink:#11141B;
+  --fg:#F2EAD9; --cin:#9E3B2E; --dim:#BCAB8E; --faint:#A8977E;
+  --acc:#C8A96B; --gold:#D8BD7A; --danger:#FF8F93;
   --line:rgba(216,170,90,.16);
   --line-hi:rgba(216,170,90,.36);
   --r-card:16px; --r-ctl:12px; --r-pill:999px;
@@ -45,9 +46,9 @@ body{
 body:before{ /* 夜空底: 顶部一丝靛蓝,底部沉入纯黑 */
   content:"";position:fixed;inset:0;z-index:-3;
   background:
-    radial-gradient(120% 78% at 50% -10%, #2a1230 0%, rgba(42,18,48,0) 60%),
-    radial-gradient(78% 54% at 50% 36%, rgba(96,34,32,.17), transparent 72%),
-    linear-gradient(180deg,#0a0510 0%,#050309 55%,#020106 100%);
+    radial-gradient(120% 78% at 50% -10%, rgba(200,169,107,.10) 0%, rgba(200,169,107,0) 60%),
+    radial-gradient(78% 54% at 50% 36%, rgba(158,59,46,.13), transparent 72%),
+    linear-gradient(180deg,#0D1017 0%,#08090D 55%,#08090D 100%);
 }
 #sky{position:fixed;inset:0;width:100%;height:100%;z-index:-2;pointer-events:none}
 .neb{position:fixed;z-index:-2;width:70vmax;height:70vmax;pointer-events:none;opacity:.5;
@@ -410,7 +411,7 @@ transition:color .3s;line-height:1.3;text-align:center}
 .modeseg{max-width:340px;margin:22px auto 0}
 .modeHint{font-size:12.5px;color:var(--faint);margin-top:10px;min-height:1.4em}
 /* 命格生成动画 */
-#gen{position:fixed;inset:0;z-index:130;display:none;place-items:center;background:rgba(3,2,7,.93);
+#gen{position:fixed;inset:0;z-index:130;display:none;place-items:center;background:rgba(8,9,13,.94);
   backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
 #gen.on{display:grid}
 .genBox{text-align:center;padding:0 24px;width:100%}
@@ -484,6 +485,84 @@ transition:color .3s;line-height:1.3;text-align:center}
   .rowIt{grid-template-columns:auto auto;row-gap:5px}
   .rowIt span{grid-column:1/-1}
 }
+.heroKeys{letter-spacing:.14em;font-size:12.5px;color:var(--faint)}
+.todayBox{margin-top:14px;display:grid;gap:13px}
+.todayBox .tr{display:grid;grid-template-columns:92px 1fr;gap:12px;align-items:baseline}
+.todayBox .k{font-size:12px;letter-spacing:.2em;color:var(--acc);white-space:nowrap}
+.todayBox .v{font-size:15.5px;color:var(--fg);line-height:1.65}
+.todayBox .v.dimv{color:var(--dim);font-size:13px}
+@media(max-width:520px){.todayBox .tr{grid-template-columns:1fr;gap:4px}}
+.adv{margin-top:20px;border:1px dashed var(--line-hi);border-radius:var(--r-ctl);padding:0 14px;background:rgba(255,255,255,.014)}
+.adv>summary{cursor:pointer;list-style:none;padding:14px 2px;font-size:13.5px;letter-spacing:.06em;color:var(--dim);user-select:none}
+.adv>summary::-webkit-details-marker{display:none}
+.adv>summary::after{content:" ＋";color:var(--acc)}
+.adv[open]>summary::after{content:" －"}
+.adv[open]{padding-bottom:16px}
+#toPro{display:block;width:100%;margin-top:16px;font-size:13px;padding:11px 12px}
+
+/* ── 命格英雄卡(正/反) ─────────────── */
+.fateWrap{margin-top:16px;perspective:1200px}
+.fateCard{position:relative;transition:transform .56s cubic-bezier(.36,.06,.2,1)}
+.fateCard.flipping{transform:rotateY(90deg)}
+.fcFace{background:linear-gradient(180deg,#0D1017 0%,#11141B 100%);border:1px solid rgba(200,169,107,.38);border-radius:16px;padding:30px 24px 26px}
+.fcTop{display:flex;justify-content:space-between;align-items:baseline}
+.fcBrand{font-family:var(--serif);letter-spacing:.3em;color:#C8A96B;font-size:15px}
+.fcBrand.sub{letter-spacing:.18em;color:var(--dim);font-size:12.5px}
+.fcTag{margin-top:22px;font-size:12px;letter-spacing:.4em;color:var(--dim);text-align:center}
+.fcXiang{text-align:center;font-family:var(--serif);font-size:clamp(3rem,11vw,4.6rem);line-height:1.12;color:#F0E6D2;margin-top:6px}
+.fcXiangSub{text-align:center;color:#8A8F9C;font-size:13.5px;letter-spacing:.24em;margin-top:8px}
+.fcTotem{display:flex;justify-content:center;margin:18px 0 4px}
+.fcTotem svg{width:172px;height:172px;max-width:74vw}
+.fcPersona{text-align:center;font-family:var(--serif);font-size:clamp(1.7rem,6.6vw,2.4rem);color:#D8BD7A;margin-top:4px}
+.fcKeys{text-align:center;color:#F0E6D2;font-size:13.5px;letter-spacing:.3em;margin-top:10px;opacity:.85}
+.fcAttrs{margin-top:22px;display:grid;gap:11px}
+.at{display:grid;grid-template-columns:56px 1fr 44px;gap:12px;align-items:center}
+.at span{color:#C9C3B4;font-size:13.5px;letter-spacing:.16em}
+.at .abar{height:7px;background:rgba(200,169,107,.14);border-radius:4px;overflow:hidden}
+.at .abar i{display:block;height:100%;background:linear-gradient(90deg,#8F7440,#C8A96B)}
+.at b{color:#D8BD7A;font-size:15px;text-align:right;font-weight:600}
+.fcFoot{margin-top:24px;padding-top:16px;border-top:1px dashed rgba(200,169,107,.28);display:flex;justify-content:space-between;align-items:baseline}
+.fcFoot em{font-style:normal;color:var(--dim);font-size:12.5px;letter-spacing:.2em}
+.fcFoot em:first-child{color:#C8A96B}
+.fcBtns{display:flex;justify-content:center;gap:10px;margin-top:14px}
+.fbName{font-family:var(--serif);font-size:clamp(1.5rem,6vw,2rem);color:#F0E6D2;text-align:center;margin-top:16px}
+.fbLine{font-family:var(--sans);font-size:13.5px;letter-spacing:.14em;color:#8A8F9C;margin-top:8px}
+.fbBlk{margin-top:20px}
+.fbBlk em{font-style:normal;display:block;font-size:12px;letter-spacing:.34em;color:#C8A96B;margin-bottom:8px}
+.fbBlk p{color:#D9D5CA;font-size:15.5px;line-height:1.85;margin:0}
+.fbBlk p b{color:#F0E6D2}
+.fbToday{color:#8A8F9C;font-size:14px;margin-top:6px}
+#btnHidden{width:100%;margin-top:22px}
+.hiddenBox{margin-top:14px;padding:16px;border:1px solid rgba(200,169,107,.4);border-radius:12px;background:rgba(200,169,107,.06);animation:reveal .6s ease}
+.hiddenBox b{display:block;font-family:var(--serif);font-size:26px;color:#D8BD7A;letter-spacing:.14em}
+.hiddenBox p{margin-top:8px;color:#D9D5CA;font-size:15px;line-height:1.8}
+@keyframes reveal{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+/* ── 五行能量环 ───────────────────── */
+.ringRow{display:flex;gap:26px;align-items:center;margin-top:16px;flex-wrap:wrap;justify-content:center}
+.wxRing{width:230px;height:230px;max-width:70vw}
+.ringLegend{display:grid;gap:9px;min-width:190px}
+.lg{display:grid;grid-template-columns:14px 1fr auto;gap:12px;align-items:center}
+.lg i{width:12px;height:12px;border-radius:50%}
+.lg span{color:#C9C3B4;font-size:14px;letter-spacing:.2em}
+.lg b{color:#F0E6D2;font-size:15px}
+/* ── 核心天赋 ─────────────────────── */
+.talList{display:grid;gap:16px;margin-top:14px}
+.tal{display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:start}
+.tal em{font-style:normal;font-family:var(--serif);color:#C8A96B;font-size:26px}
+.tal b{color:#F0E6D2;font-size:17px;letter-spacing:.16em}
+.tal p{margin-top:6px;color:#CFCABE;font-size:15px;line-height:1.8}
+/* ── AI 命格师 ────────────────────── */
+.aiLead{margin-top:14px;font-family:var(--serif);font-size:20px;color:#F0E6D2}
+.aiChips{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+.chip{border:1px solid rgba(200,169,107,.4);background:none;color:#D9D5CA;font-size:13.5px;padding:9px 13px;border-radius:10px;cursor:pointer;min-height:40px}
+.chip:hover,.chip:active{border-color:#C8A96B;color:#F0E6D2}
+#aiQ{width:100%;box-sizing:border-box;margin-top:14px;background:#08090D;border:1px solid rgba(200,169,107,.3);border-radius:12px;color:#F0E6D2;padding:14px;font-size:15.5px;line-height:1.7;resize:vertical;min-height:92px}
+#aiQ:focus{outline:none;border-color:#C8A96B}
+/* ── 保存卡 ───────────────────────── */
+.saveRow{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.saveRow input{flex:1 1 220px;min-width:0}
+.saveRow button{min-height:48px}
+@media(max-width:480px){.ringRow{gap:16px}.fcFace{padding:26px 18px 22px}}
 </style>
 </head>
 <body>
@@ -496,19 +575,21 @@ transition:color .3s;line-height:1.3;text-align:center}
 <nav class="topnav">
   <a class="brand" href="#top">修行世界</a>
   <span class="grp">
-    <a href="#sample">真实卡例</a>
     <a href="#tjg">天机阁</a>
+    <a href="#ai">AI 命格师</a>
+    <a href="#today">今日修行</a>
     <button class="btnPrim sm" type="button" data-jump="#tjg">开始推演</button>
   </span>
 </nav>
 
 <!-- 01 · Hero -->
 <header class="hd" id="top">
+  <div class="kicker">天 机 阁</div>
   <h1 id="ttl" data-br="5">你的命格，正在等待觉醒。</h1>
-  <p class="sub rv">修行世界 · 一个可以进去探索自己的东方人生系统</p>
-  <div class="ctaBox rv">
-    <button class="btnPrim" type="button" data-jump="#tjg">开始我的命格推演</button>
-    <p>约 2 分钟 · 只要出生的年月日时</p>
+  <p class="sub rv">输入出生信息，唤醒属于你的东方命格。</p>
+  <div class="ctaBox rv" id="cta">
+    <button class="btnPrim" type="button" data-jump="#tjg">🔮 唤醒我的命格</button>
+    <p class="heroKeys">八字 · 五行 · 性格 · 天赋 · 人生阶段 · 修行方向</p>
   </div>
 </header>
 
@@ -518,12 +599,12 @@ transition:color .3s;line-height:1.3;text-align:center}
   <h2 class="big">一次推演，看见六个自己</h2>
   <p class="lead">生辰是钥匙。同一份八字在天机阁里拆成六张脸,每一张都由排盘算出来,不是模板。</p>
   <div class="sixGrid">
-    <div class="sixCell"><u>壹</u><b>称号</b><i>日主五行定的英雄名:守夜金客,还是守夜火客,天生的。</i></div>
-    <div class="sixCell"><u>贰</u><b>定位</b><i>格局决定你在场上的位置:刺客、坦克、法师还是辅助。</i></div>
-    <div class="sixCell"><u>叁</u><b>技能组</b><i>四柱各配一招:先天、社会、自身、成果。</i></div>
-    <div class="sixCell"><u>肆</u><b>属性面板</b><i>五行各一条,哪条短补哪条,一眼看清。</i></div>
-    <div class="sixCell"><u>伍</u><b>心魔副本</b><i>十神对应的两个心魔,和它们的破解方法。</i></div>
-    <div class="sixCell"><u>陆</u><b>赛季</b><i>大运十年一换,流年一年一换,你在第几季。</i></div>
+    <div class="sixCell"><u>壹</u><b>命格</b><i>四象定你的底色:玄武、青龙、白虎还是朱雀,先沉住还是先出手。</i></div>
+    <div class="sixCell"><u>贰</u><b>五行</b><i>木火土金水各占多少,哪条旺哪条虚,一眼看清能量结构。</i></div>
+    <div class="sixCell"><u>叁</u><b>性格</b><i>人格原型给出你的行事底色:谋士、游侠、隐士还是开拓者。</i></div>
+    <div class="sixCell"><u>肆</u><b>天赋</b><i>洞察、行动、意志、判断、适应、创造——你最锋利的三把刀。</i></div>
+    <div class="sixCell"><u>伍</u><b>人生阶段</b><i>大运十年一换,流年一年一换,你在第几季、接下来怎么走。</i></div>
+    <div class="sixCell"><u>陆</u><b>修行方向</b><i>把命理结论落回每天怎么活:一个方向,一件今天就能做的小事。</i></div>
   </div>
 </section>
 
@@ -561,7 +642,7 @@ transition:color .3s;line-height:1.3;text-align:center}
     </div>
     <p class="note">上面是同一次推演的结构输出。完整卡还会写出技能组、心魔副本、八个赛季与未来八年流年,直接飞进你的邮箱。</p>
   </div>
-  <div class="ctaBox"><button class="btnPrim" type="button" data-jump="#tjg">推我一张</button></div>
+  <div class="ctaBox"><button class="btnPrim" type="button" data-jump="#tjg">🔮 唤醒我的命格</button></div>
 </section>
 
 <!-- 04 · 开始推演 -->
@@ -575,7 +656,7 @@ transition:color .3s;line-height:1.3;text-align:center}
   </div>
 </section>
 
-<!-- 05 · 生辰信息 -->
+<!-- 04 · 开始推演后的生辰输入 -->
 <header class="hd2" id="tjg">
   <h2>天机阁</h2>
   <p class="sub">入阁先报生辰 · 命格英雄卡推演既毕,直投你的邮箱</p>
@@ -607,8 +688,10 @@ transition:color .3s;line-height:1.3;text-align:center}
             <div class="seg"><i class="ink"></i><label><input type="radio" name="sex" value="male" checked><span>男</span></label><label><input type="radio" name="sex" value="female"><span>女</span></label></div>
           </div>
           <div>
-            <div class="lab">纪年 · 你记的是哪种日子</div>
-            <div class="seg"><i class="ink"></i><label><input type="radio" name="cal" value="solar" checked><span>公历 · 阳历<i class="rec">推荐</i></span></label><label><input type="radio" name="cal" value="lunar"><span>农历 · 黄历</span></label></div>
+            <div class="lab">出生城市 · 用你头顶的太阳定时刻</div>
+            <input type="text" id="city" list="cityList" placeholder="输入城市名,如:洛阳" autocomplete="off">
+            <datalist id="cityList"></datalist>
+            <div class="lab cityHint" id="cityHint"></div>
           </div>
         </div>
         <div class="lab">降生时刻</div>
@@ -616,10 +699,16 @@ transition:color .3s;line-height:1.3;text-align:center}
           <input type="date" id="bd" value="2000-01-01" aria-label="出生日期">
           <input type="time" id="bt" value="00:00" aria-label="出生时间">
         </div>
-        <div id="leapWrap" style="display:none">
-          <div class="lab">闰月 · 阴历里多出来的月份</div>
-          <div class="seg"><i class="ink"></i><label><input type="radio" name="leap" value="0" checked><span>非闰月</span></label><label><input type="radio" name="leap" value="1"><span>闰月</span></label></div>
-        </div>
+        <details class="adv" id="adv0">
+          <summary>⚙️ 专业排盘设置 · 默认已按推荐排法,不用动</summary>
+          <div class="lab">纪年 · 你记的是哪种日子</div>
+          <div class="seg"><i class="ink"></i><label><input type="radio" name="cal" value="solar" checked><span>公历 · 阳历<i class="rec">推荐</i></span></label><label><input type="radio" name="cal" value="lunar"><span>农历 · 黄历</span></label></div>
+          <div id="leapWrap" style="display:none">
+            <div class="lab">闰月 · 阴历里多出来的月份</div>
+            <div class="seg"><i class="ink"></i><label><input type="radio" name="leap" value="0" checked><span>非闰月</span></label><label><input type="radio" name="leap" value="1"><span>闰月</span></label></div>
+          </div>
+          <button type="button" class="ghost" id="toPro">展开 16 种排法 · 换年 / 真太阳时 / 子时 / 定月</button>
+        </details>
       </div>
     </div>
   </section>
@@ -628,9 +717,9 @@ transition:color .3s;line-height:1.3;text-align:center}
   <section class="panel" id="p1" aria-labelledby="h1h">
     <div class="card">
       <div class="ptop">
-        <span class="pnum">第二步 · 流派</span>
+        <span class="pnum">专业 · 流派</span>
         <h2 id="h1h" tabindex="-1">16 种排法,选你信的那个</h2>
-        <p class="phint">带「推荐」的是当前最主流、最精准的排法;拿不准就保持默认。</p>
+        <p class="phint">从第一步的「⚙️ 专业排盘设置」进来。带「推荐」的是当前最主流、最精准的排法;拿不准就保持默认,返回上一步照样能推。</p>
       </div>
       <div class="pbody">
         <div class="g2">
@@ -650,12 +739,6 @@ transition:color .3s;line-height:1.3;text-align:center}
             <div class="lab">定月 · 月份怎么切</div>
             <div class="seg"><i class="ink"></i><label><input type="radio" name="monthRule" value="jieqi" checked><span>节气定月<i class="rec">推荐</i></span></label><label><input type="radio" name="monthRule" value="lunar"><span>农历定月</span></label></div>
           </div>
-        </div>
-        <div id="lonWrap" style="display:none">
-          <div class="lab">出生地 · 真太阳时按你头顶的太阳算</div>
-          <input type="text" id="city" list="cityList" placeholder="输入城市名,如:洛阳" autocomplete="off">
-          <datalist id="cityList"></datalist>
-          <div class="lab cityHint" id="cityHint"></div>
         </div>
       </div>
     </div>
@@ -685,11 +768,11 @@ transition:color .3s;line-height:1.3;text-align:center}
     <div class="card">
       <div class="ptop">
         <span class="pnum">第四步 · 入盘</span>
-        <h2 id="h3h" tabindex="-1">英雄卡寄到你手上</h2>
-        <p class="phint">留下邮箱:你会先收到一封「当前排位」;英雄卡炼成后,第二封飞过去。</p>
+        <h2 id="h3h" tabindex="-1">最后一步 · 唤醒你的命格</h2>
+        <p class="phint">邮箱选填 —— 不留也能当场出卡。留了:先收到一封「当前排位」,完整卡炼成后第二封飞过去。</p>
       </div>
       <div class="pbody">
-        <div class="lab">收卡邮箱</div>
+        <div class="lab">收卡邮箱 · 选填</div>
         <input type="email" id="mail" placeholder="你的邮箱 · 收卡用" autocomplete="email" aria-describedby="merr mailnote">
               <div id="mailnote" class="lab" style="margin-top:10px;color:#8d8574;font-size:12.5px">邮箱仅用于发送排位与英雄卡,不作他用</div>
         <div id="merr"></div>
@@ -715,29 +798,88 @@ transition:color .3s;line-height:1.3;text-align:center}
   <div class="doneTxt" id="doneTxt"></div>
 </section>
 
-<!-- 06 · 命格生成动画 -->
+<!-- 05-06 · 生辰输入 → 命格生成动画 -->
 <div id="gen" aria-hidden="true">
   <div class="genBox">
     <div class="genRing"><span class="gz" id="genGz">命</span></div>
-    <div class="gl">起 盘</div>
-    <div class="gs">正在把你的生辰排进天机阁</div>
+    <div class="gl">正在连接天时……</div>
+    <div class="gs">天时 · 你出生那一刻的星象</div>
     <div class="genGz" id="genGzRow"></div>
   </div>
 </div>
 
-<!-- 07 · 命格英雄卡(本地即时排盘) -->
+<!-- 06-07 · 命格生成动画 → 命格英雄卡(本地即时排盘) -->
 <section id="result" hidden>
   <div class="mailStat" id="mailStat"><i class="dotm"></i><div id="mailStatTxt">命盘生成中…</div></div>
 
-  <div class="card" style="margin-top:14px">
-    <span class="pnum">命格英雄卡 · 本地即时排盘</span>
+  <!-- 07 · 命格英雄卡(正面/背面) -->
+  <div class="fateWrap" id="fateWrap" style="display:none">
+    <div class="fateCard" id="fateCard">
+      <div class="fcFace" id="fcFront">
+        <div class="fcTop"><span class="fcBrand">天机阁</span><span class="fcBrand sub">修行世界</span></div>
+        <div class="fcTag">命格原型</div>
+        <div class="fcXiang" id="fcXiang">—</div>
+        <div class="fcXiangSub" id="fcXiangSub"></div>
+        <div class="fcTotem" id="fcTotem"></div>
+        <div class="fcTag">人格原型</div>
+        <div class="fcPersona" id="fcPersona">—</div>
+        <div class="fcKeys" id="fcKeys"></div>
+        <div class="fcAttrs" id="fcAttrs"></div>
+        <div class="fcFoot"><em id="fcCode">TJ-0000</em><em id="fcLv">Lv.01 初识</em></div>
+      </div>
+      <div class="fcFace" id="fcBack" style="display:none">
+        <div class="fcTop"><span class="fcBrand">天机阁</span><span class="fcBrand sub">我的命格</span></div>
+        <div class="fbName" id="fbName">—</div>
+        <div class="fbBlk"><em>核心优势</em><p id="fbTalent"></p></div>
+        <div class="fbBlk"><em>容易失衡的地方</em><p id="fbBlind"></p></div>
+        <div class="fbBlk"><em>修行方向</em><p id="fbDir"></p><p class="fbToday" id="fbToday"></p></div>
+        <button class="ghost" type="button" id="btnHidden">揭示隐藏天赋</button>
+        <div class="hiddenBox" id="hiddenBox" style="display:none"></div>
+      </div>
+    </div>
+    <div class="fcBtns"><button class="pri" type="button" id="btnFlip">翻面 · 看我的命格</button></div>
+  </div>
+
+  <!-- 15 · 五行能量环 -->
+  <div class="card" id="ringCard" style="margin-top:14px;display:none">
+    <span class="pnum">五行能量环</span>
+    <div class="ringRow"><svg class="wxRing" id="wxRing" viewBox="0 0 220 220" aria-label="五行能量环"></svg>
+      <div class="ringLegend" id="ringLegend"></div></div>
+  </div>
+
+  <!-- 16 · 你的核心天赋 -->
+  <div class="card" id="talCard" style="margin-top:14px;display:none">
+    <span class="pnum">你的核心天赋</span>
+    <div class="talList" id="talentBox"></div>
+  </div>
+
+  <!-- 邮箱后置 · 保存完整卡 -->
+  <div class="card" id="saveCard" style="margin-top:14px;display:none">
+    <span class="pnum">保存你的命格英雄卡</span>
+    <p class="note">卡就在上面 —— 不留邮箱,这些照样看。留个邮箱,把完整版(含流年、技能组、心魔副本)也寄给你:一封排位提醒,一封完整卡。</p>
+    <div class="saveRow"><input type="email" id="saveMail" placeholder="你的邮箱" autocomplete="email"><button class="pri" type="button" id="btnSaveMail">寄完整卡</button></div>
+    <p class="note" id="saveNote" style="margin-top:8px"></p>
+  </div>
+
+  <!-- 08 · AI 命格师 -->
+  <div class="card" id="aiCard" style="margin-top:14px;display:none">
+    <span class="pnum">AI 命格师 · 继续问下去</span>
+    <p class="aiLead">你的命格已经觉醒。现在,你可以继续问它。</p>
+    <div class="aiChips" id="aiChips"></div>
+    <textarea id="aiQ" rows="3" placeholder="问点具体的:我最大的优势是什么？为什么我容易想太多？"></textarea>
+    <div class="acts"><button class="pri" type="button" id="btnAsk">把问题寄给命格师</button></div>
+    <p class="note" id="aiNote">问题会连同你的命格、五行、人格原型、六项属性、核心天赋与容易失衡的地方一起送出,答案从邮箱回来。只谈传统文化、自我观察与行为建议 —— 不做诊断,不许诺命运。</p>
+  </div>
+
+  <div class="card" id="chartCard" style="margin-top:14px">
+    <span class="pnum">排盘明细 · 四柱与五行</span>
     <div class="sampleHead" id="rHead"></div>
     <div class="p4" id="rP4"></div>
     <div class="wxBars" id="rWx"></div>
     <div class="fact" id="rFact"></div>
     <p class="note" id="rNote"></p>
     <div class="acts">
-      <button class="pri" type="button" id="btnShare">保存分享图</button>
+      <button class="pri" type="button" id="btnShare">生成我的命格卡</button>
       <button type="button" id="btnAgain">再推一次</button>
       <button type="button" id="btnLink">复制我的推演链接</button>
       <button type="button" id="btnForget" style="display:none">清除存档</button>
@@ -771,7 +913,30 @@ transition:color .3s;line-height:1.3;text-align:center}
   </div>
 </section>
 
-<!-- 09 · 修行世界介绍 -->
+
+<!-- 08 · AI 命格师 -->
+<section class="lg rv" id="ai">
+  <div class="kicker">A I 命 格 师</div>
+  <h2 class="big">与我的命格师聊聊</h2>
+  <p class="lead">你的命格已经觉醒。现在，你可以继续问它——问优势、问失衡、问当下该练什么。命格师带着你的命格、五行、人格原型和六项属性一起听。</p>
+  <div class="ctaBox">
+    <button class="btnPrim" type="button" id="btnAI">🧙 与我的命格师聊聊</button>
+    <p>先完成一次推演 · 命格师认得你的盘</p>
+  </div>
+</section>
+
+<!-- 09 · 今日修行 -->
+<section class="lg rv" id="today">
+  <div class="kicker">今 日 修 行</div>
+  <h2 class="big">今天练什么</h2>
+  <div class="card" style="margin-top:24px">
+    <span class="pnum">每日一条 · 按当日干支现算</span>
+    <div class="todayBox" id="todayBox"></div>
+  </div>
+  <p class="lead" style="margin-top:18px">不打卡,不排行,不做完也没有惩罚。每天一条,做完心里有数就行。</p>
+</section>
+
+<!-- 10 · 修行世界介绍 -->
 <section class="lg rv" id="intro">
   <div class="kicker">关 于 修 行 世 界</div>
   <h2 class="big">东方人生系统</h2>
@@ -779,16 +944,16 @@ transition:color .3s;line-height:1.3;text-align:center}
   <div class="ctaBox"><button class="btnPrim" type="button" data-jump="#tjg">进入天机阁</button></div>
 </section>
 
-<!-- 10 · 免责声明 -->
+<!-- 11 · 免责声明 -->
 <section class="lg rv" id="disc">
   <div class="kicker">免 责 声 明</div>
   <h2 class="big">传统文化说明</h2>
-  <p class="fine">本站内容基于中国传统命理文化的符号系统,用于文化体验、自省与玩味,不构成任何命定断言,也不构成医疗、投资、婚姻、法律或职业建议,请勿据此做出重大人生决策。生辰与邮箱仅用于生成本次推演,不作他用。</p>
+  <p class="fine">本产品内容源于传统文化与 AI 推演,仅供自我探索、文化体验与娱乐参考,不构成科学结论,也不构成医疗、法律、投资或其他专业建议。传统命理通常被理解为一种自我观察的角度,不是命定断言——请勿据此做出重大人生决策。生辰与邮箱仅用于生成本次推演,不作他用。</p>
 </section>
 
 <p class="foot rv">
-  <span class="sigil">修 行 世 界</span>
-  符号推演,供自省与玩味,不构成命定断言。<br>提交即入队,排位立刻飞到你的邮箱。
+  <span class="sigil">天 机 阁 · 修 行 世 界</span>
+  传统文化 · 自我探索 · 娱乐体验,不构成命定断言。<br>xiuxing-world.beam.page
 </p>
 
 <!-- 分享图弹层 -->
@@ -840,7 +1005,7 @@ function radio(n){var e=document.querySelector('input[name="'+n+'"]:checked');re
 /* ── 条件字段显隐 ───────────────────── */
 function toggleCond(){
   $("leapWrap").style.display=radio("cal")==="lunar"?"block":"none";
-  $("lonWrap").style.display=radio("tz")==="ts"?"block":"none";
+  var lw=$("lonWrap"); if(lw) lw.style.display=radio("tz")==="ts"?"block":"none";
   fit();
 }
 document.querySelectorAll('input[name="cal"],input[name="tz"]').forEach(function(r){
@@ -965,10 +1130,10 @@ function check(from,to){
     if(usedToday().length>=3) return "今日命签已用完 3 次,明日再来";
     var bd=$("bd").value, bt=$("bt").value;
     if(!bd||!bt)return "降生时刻还没填完整";
-  }
-  if(from===1&&radio("tz")==="ts"){
-    if($("city").value.trim()==="")return "真太阳时要先告诉我你在哪出生 — 差几度就差几分钟";
-    if(cityLon()===null)return "这地名我认不出,换个写法(如:洛阳 / 洛阳市)";
+    if(radio("tz")==="ts"){
+      if($("city").value.trim()==="")return "填一下出生城市 — 真太阳时差几分钟,盘就不同";
+      if(cityLon()===null)return "这地名我认不出,换个写法(如:洛阳 / 洛阳市)";
+    }
   }
   if(from===2){
     var nmOn=$("nmOn").checked, nm=$("nm").value.trim();
@@ -991,11 +1156,11 @@ document.addEventListener("keydown",function(e){
 $("go").addEventListener("click",function(){
   var merr=$("merr"); merr.style.display="none"; $("mail").removeAttribute("aria-invalid");
   var mail=$("mail").value.trim();
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)){
+  if(mail&&!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)){
     merr.textContent="邮箱地址看着不对"; merr.style.display="block"; $("mail").setAttribute("aria-invalid","true"); return;
   }
-  if(usedToday().length>=3){
-    merr.textContent="今日命签已用完 3 次,明日再来"; merr.style.display="block"; return;
+  if(mail&&usedToday().length>=3){
+    merr.textContent="这个邮箱今日命签已用完 3 次,明日再来(不填邮箱可继续本机推演)"; merr.style.display="block"; return;
   }
   var btn=$("go"); btn.disabled=true; btn.textContent="入盘中……";
   $("load").classList.add("on");
@@ -1030,14 +1195,14 @@ if(window.ResizeObserver){ new ResizeObserver(fit).observe(stage) }
   for(var i=0;i<64;i++){
     var a=i*5.625, sx=Math.abs(Math.sin(a*Math.PI/180));
     var op=sx>.878?1:0;
-    h+='<span style="left:'+(50+46.5*Math.sin(a*Math.PI/180))+'%;top:'+(50-46.5*Math.cos(a*Math.PI/180))+'%;opacity:'+op+';transform:translate(-50%,-50%)">'+GUA64[i]+'</span>';
+    h+='<span style="left:'+(50+47*Math.sin(a*Math.PI/180))+'%;top:'+(50-47*Math.cos(a*Math.PI/180))+'%;opacity:'+op+';transform:translate(-50%,-50%)">'+GUA64[i]+'</span>';
   }
   mr.innerHTML=h;
   /* 先天八卦(伏羲方位, 上南下北): 乾0 巽45 坎90 艮135 坤180 震225 离270 兑315 */
   var BG=[[0,"乾","☰"],[45,"巽","☴"],[90,"坎","☵"],[135,"艮","☶"],[180,"坤","☷"],[225,"震","☳"],[270,"离","☲"],[315,"兑","☱"]], bh="";
   for(var k=0;k<8;k++){
     var ba=BG[k][0];
-    bh+='<span style="left:'+(50+43*Math.sin(ba*Math.PI/180))+'%;top:'+(50-43*Math.cos(ba*Math.PI/180))+'%;transform:translate(-50%,-50%)">'+BG[k][2]+'<i>'+BG[k][1]+'</i></span>';
+    bh+='<span style="left:'+(50+38.5*Math.sin(ba*Math.PI/180))+'%;top:'+(50-38.5*Math.cos(ba*Math.PI/180))+'%;transform:translate(-50%,-50%)">'+BG[k][2]+'<i>'+BG[k][1]+'</i></span>';
   }
   gu.innerHTML=bh;
   /* 十二地支: 子北(下) 午南(上) 卯东(左) 酉西(右), 每30° */
@@ -1248,8 +1413,8 @@ function toInput(f){
 function applyMode(m){
   SEQ=(m==="pro")?[0,1,2,3]:[0,2,3];
   $("modeHint").textContent=(m==="pro")
-    ? "专业:16 种排法自选 —— 换年、真太阳时、子时之争、定月。"
-    : "普通:按最主流的推荐参数直接排,不用懂术语。";
+    ? "专业:16 种排法自选 —— 换年、真太阳时、子时之争、定月;第一步还多出纪年与闰月。"
+    : "普通:按最主流的推荐参数直接排,不用懂术语;要动细节,点第一步的 ⚙️ 专业排盘设置。";
   if(SEQ.indexOf(cur)<0){
     Array.prototype.forEach.call(stage.querySelectorAll(".panel"),function(p){p.classList.remove("on")});
     cur=SEQ[0]; $("p"+cur).classList.add("on");
@@ -1288,10 +1453,18 @@ function playGen(chart,cb){
   if(reduce||!chart){ el.classList.remove("on"); cb(); return }
   $("genGz").textContent=chart.dayGan;
   $("genGzRow").innerHTML=chart.gz.map(function(z){return "<span>"+z+"</span>"}).join("");
-  var labels=["起 盘","定 格","入 卡"], i=0, gl=el.querySelector(".gl");
-  gl.textContent=labels[0]; el.classList.add("on");
-  var iv=setInterval(function(){ i++; if(i<labels.length) gl.textContent=labels[i]; },560);
-  setTimeout(function(){ clearInterval(iv); el.classList.remove("on"); cb() },1750);
+  var stages=[
+    ["正在连接天时……","天时 · 你出生那一刻的星象"],
+    ["正在校准出生地……","地利 · 按你头顶的太阳算"],
+    ["正在解析五行……","五行 · 木火土金水的配比"],
+    ["正在生成命格……","命格 · 四象与人格原型"],
+    ["命格已觉醒。","你的命格英雄卡已经好了"]
+  ];
+  var i=0, gl=el.querySelector(".gl"), gs=el.querySelector(".gs");
+  function put(){ gl.textContent=stages[i][0]; gs.textContent=stages[i][1] }
+  put(); el.classList.add("on");
+  var iv=setInterval(function(){ i++; if(i<stages.length) put(); else clearInterval(iv) },700);
+  setTimeout(function(){ clearInterval(iv); el.classList.remove("on"); cb() },3500);
 }
 
 /* ── 07 · 结果页 ─────────────────────── */
@@ -1308,6 +1481,7 @@ function ysShow(p){
 function showResult(p,g,f){
   chartCache=p; gameCache=g; payloadCache=f;
   paintAll("");
+  try{ fateCache=Fate.fate(p); paintFate(fateCache,p,g,f); }catch(e){ if(window.console)console.warn("fate",e) }
   $("result").hidden=false;
   $("rHead").innerHTML='<span class="name">'+esc(g.title)+'</span>'+
     '<span class="pill">'+esc(g.position)+' · '+esc(g.school)+'</span>'+
@@ -1352,9 +1526,9 @@ function showLocalFail(msg){
   $("result").hidden=false;
   $("rHead").innerHTML='<span class="name">命盘待出</span><span class="pill mz">本地排盘未成功</span>';
   $("rNote").textContent="浏览器这一步没跑通("+(msg||"未知")+"),生辰已经送到,完整卡会从邮箱到 —— 下面的排盘结果由邮件里的那份给出。";
-  var cards=qa("#result .card"), gr=qa("#result .grid2");
-  cards.forEach(function(c,i){ if(i>0)c.style.display="none" });
-  gr.forEach(function(g){ g.style.display="none" });
+  ["fateWrap","ringCard","talCard","aiCard"].forEach(function(id){ var e=document.getElementById(id); if(e)e.style.display="none" });
+  qa("#result .card").forEach(function(c){ if(c.id!=="saveCard"&&c.id!=="chartCard") c.style.display="none" });
+  qa("#result .grid2").forEach(function(g){ g.style.display="none" });
   $("rP4").innerHTML=""; $("rWx").innerHTML=""; $("rFact").innerHTML="";
 }
 
@@ -1393,72 +1567,199 @@ $("btnAgain").addEventListener("click",function(){
   navDone=false; paintSteps(); fit(); showNav(true); scrollTo("#tjg");
 });
 
-/* ── 分享图 (1080×1520, 手机长按保存) ── */
+
+/* ── 命格身份层(八字 → 四象命格/人格原型/六属性, fate.js 纯代码零随机) ── */
+var fateCache=null;
+var XELE={"玄武":["北","水"],"青龙":["东","木"],"白虎":["西","金"],"朱雀":["南","火"]};
+var WXCOL={"木":"#4E7A5B","火":"#9E3B2E","土":"#A98B4F","金":"#C9C3B4","水":"#3D5A73"};
+function totemSVG(name){
+  var st='fill="none" stroke="#C8A96B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"';
+  var em={
+    "玄武":'<path '+st+' d="M100 56 L138 78 L138 122 L100 144 L62 122 L62 78 Z"/><path '+st+' d="M100 74 L122 87 L122 113 L100 126 L78 113 L78 87 Z" opacity=".55"/><path '+st+' d="M52 150 C80 134 88 166 116 150 C136 139 146 156 152 148"/><path '+st+' d="M64 166 q14 -9 28 0 t28 0" opacity=".6"/>',
+    "青龙":'<path '+st+' d="M64 148 L92 124 L84 96 L114 76 L108 52"/><path '+st+' d="M96 112 L124 122" opacity=".8"/><path '+st+' d="M88 92 L118 100" opacity=".8"/><path '+st+' d="M76 136 L104 146" opacity=".8"/><circle cx="108" cy="46" r="6" fill="#C8A96B"/>',
+    "白虎":'<path '+st+' d="M100 54 L152 146 L48 146 Z"/><path '+st+' d="M76 124 L124 124" opacity=".7"/><path '+st+' d="M86 104 L114 104" opacity=".7"/><path '+st+' d="M94 86 L106 86" opacity=".7"/><path '+st+' d="M100 146 L100 164" opacity=".6"/>',
+    "朱雀":'<path '+st+' d="M100 52 L74 96"/><path '+st+' d="M100 52 L126 96"/><path '+st+' d="M74 96 C70 122 86 136 100 140 C114 136 130 122 126 96"/><path '+st+' d="M100 140 L100 166"/><path '+st+' d="M84 152 L100 160 L116 152" opacity=".7"/><circle cx="100" cy="60" r="5" fill="#C8A96B"/>'
+  };
+  return '<svg viewBox="0 0 200 200" width="168" height="168" role="img" aria-label="'+name+'命格图腾">'+
+    '<circle cx="100" cy="100" r="92" fill="none" stroke="rgba(200,169,107,.35)" stroke-width="1"/>'+
+    '<circle cx="100" cy="100" r="86" fill="none" stroke="rgba(200,169,107,.16)" stroke-width="1" stroke-dasharray="2 7"/>'+
+    '<circle cx="100" cy="8" r="3" fill="#C8A96B"/><circle cx="192" cy="100" r="3" fill="#C8A96B"/>'+
+    '<circle cx="100" cy="192" r="3" fill="#C8A96B"/><circle cx="8" cy="100" r="3" fill="#C8A96B"/>'+
+    (em[name]||"")+'</svg>';
+}
+function paintRing(wx){
+  var keys=["木","火","土","金","水"], tot=0;
+  keys.forEach(function(k){ tot+=wx[k] });
+  if(!tot) tot=1;
+  var C=2*Math.PI*84, off=0, h="";
+  keys.forEach(function(k){
+    var frac=wx[k]/tot, len=Math.max(C*frac-7,1);
+    h+='<circle cx="110" cy="110" r="84" fill="none" stroke="'+WXCOL[k]+'" stroke-width="18" stroke-dasharray="'+len.toFixed(2)+' '+(C-len).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 110 110)"/>';
+    off+=C*frac;
+  });
+  var top=keys.slice().sort(function(a,b){ return wx[b]-wx[a] })[0];
+  h+='<text x="110" y="104" text-anchor="middle" fill="#C8A96B" font-size="34" font-family="serif">'+top+'</text>';
+  h+='<text x="110" y="132" text-anchor="middle" fill="#8A8F9C" font-size="13">最旺 '+wx[top]+'</text>';
+  $("wxRing").innerHTML=h;
+  $("ringLegend").innerHTML=keys.map(function(k){
+    return '<div class="lg"><i style="background:'+WXCOL[k]+'"></i><span>'+k+'</span><b>'+wx[k]+'</b></div>';
+  }).join("")+'<p class="note" style="margin-top:10px">环按你盘里五行的实际力量分段 —— 越宽越旺,越窄越轻。旺的要会用,轻的不必硬补。</p>';
+}
+function paintFate(F,p,g,f){
+  var xe=XELE[F.xiang.name]||["",""];
+  $("fateWrap").style.display="";
+  $("fcXiang").textContent=F.xiang.name;
+  $("fcXiangSub").textContent=xe[0]+"方之象 · "+xe[1]+"命";
+  $("fcTotem").innerHTML=totemSVG(F.xiang.name);
+  $("fcPersona").textContent=F.persona;
+  $("fcKeys").textContent=F.keywords.join(" · ");
+  $("fcAttrs").innerHTML=F.attrList.map(function(a){
+    return '<div class="at"><span>'+a[0]+'</span><span class="abar"><i style="width:'+a[1]+'%"></i></span><b>'+a[1]+'</b></div>';
+  }).join("");
+  $("fcCode").textContent=F.code;
+  $("fcLv").textContent=F.level;
+  $("fbName").innerHTML=esc(F.xiang.name)+" · "+esc(F.persona)+(F.xiang.line?'<p class="fbLine">'+esc(F.xiang.line)+'</p>':"");
+  $("fbTalent").textContent=F.talents.slice(0,2).join(" ");
+  $("fbBlind").innerHTML='<b>'+esc(F.blind.title)+'。</b>'+esc(F.blind.desc);
+  $("fbDir").textContent=F.practice.dir;
+  $("fbToday").textContent="今日可以尝试:"+F.practice.today;
+  var hb=$("hiddenBox"); hb.style.display="none";
+  $("btnHidden").style.display=""; $("btnHidden").textContent="揭示隐藏天赋";
+  $("fateCard").classList.remove("flipping");
+  $("fcBack").style.display="none"; $("fcFront").style.display=""; $("btnFlip").textContent="翻面 · 看我的命格";
+  $("ringCard").style.display=""; paintRing(p.wuXing);
+  $("talCard").style.display="";
+  $("talentBox").innerHTML=F.talents.map(function(t,i){
+    return '<div class="tal"><em>0'+(i+1)+'</em><div><b>'+esc(F.attrList[i][0])+'</b><p>'+esc(t)+'</p></div></div>';
+  }).join("");
+  $("aiCard").style.display="";
+  if(!$("aiChips").childNodes.length){
+    $("aiChips").innerHTML=["我最大的优势是什么？","为什么我容易想太多？","我的性格容易在哪些地方失衡？","我现在应该重点关注什么？","我应该培养什么习惯？"]
+      .map(function(q){ return '<button type="button" class="chip">'+q+'</button>' }).join("");
+  }
+  $("saveCard").style.display=(f&&f.email)?"none":"";
+}
+/* 翻面 */
+$("btnFlip").addEventListener("click",function(){
+  var toBack=$("fcBack").style.display==="none";
+  this.textContent=toBack?"翻回正面":"翻面 · 看我的命格";
+  function swap(){ $("fcBack").style.display=toBack?"":"none"; $("fcFront").style.display=toBack?"none":"" }
+  if(reduce){ swap(); return }
+  var card=$("fateCard");
+  card.classList.add("flipping");
+  setTimeout(function(){ swap(); card.classList.remove("flipping") },280);
+});
+/* 揭示隐藏天赋 */
+$("btnHidden").addEventListener("click",function(){
+  if(!fateCache) return;
+  var hb=$("hiddenBox");
+  hb.innerHTML='<b>'+esc(fateCache.hidden.name)+'</b><p>'+esc(fateCache.hidden.desc)+'</p>';
+  hb.style.display="block"; this.style.display="none";
+});
+/* 保存完整卡(邮箱后置) */
+$("btnSaveMail").addEventListener("click",function(){
+  var m=$("saveMail").value.trim(), note=$("saveNote");
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(m)){ note.textContent="邮箱地址看着不对"; return }
+  if(usedToday().length>=3){ note.textContent="今日命签已用完 3 次,明日再来"; return }
+  note.textContent="正在送出…";
+  sendMail(buildPayload(m),m);
+  $("saveCard").style.display="none";
+});
+/* AI 命格师: 问题连同命格上下文一起送出,答案从邮箱回来 */
+$("aiChips").addEventListener("click",function(e){
+  if(e.target&&e.target.classList.contains("chip")){ $("aiQ").value=e.target.textContent; $("aiQ").focus() }
+});
+$("btnAsk").addEventListener("click",function(){
+  if(!fateCache||!payloadCache) return;
+  var q=$("aiQ").value.trim(), note=$("aiNote");
+  if(!q){ note.textContent="先写个问题,比如:我最大的优势是什么？"; return }
+  var mail=payloadCache.email||$("saveMail").value.trim();
+  if(!mail){ note.textContent="先在上面留个邮箱 —— 命格师的回答要从邮箱回来。"; $("saveMail").focus(); return }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)){ note.textContent="邮箱看着不对,改一下"; return }
+  if(usedToday().length>=3){ note.textContent="今日命签已用完 3 次,明日再来"; return }
+  var F=fateCache, pl=buildPayload(mail);
+  /* action 限 20 字段: 删 name/keywords, kind 由 question 判定 → 共 19 */
+  delete pl.name;
+  pl.question=q;
+  pl.mingGe=F.xiang.name; pl.persona=F.persona;
+  pl.attrs=F.attrList.map(function(a){ return a[0]+" "+a[1] }).join(" · ");
+  pl.talents=F.talents.join(" / ");
+  pl.blind=F.blind.title+" — "+F.blind.desc;
+  pl.practice=F.practice.dir+" 今日:"+F.practice.today;
+  pl.pillars=chartCache.gz.join(" ");
+  note.textContent="正在把问题送出…";
+  fetch("https://api.beam.page/actions/xiuxing-world/email",{
+    method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(pl)
+  }).then(function(r){
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    try{ var t=usedToday(); t.push(Date.now()); localStorage.setItem("xx_times",JSON.stringify(t.slice(-3))) }catch(e){}
+    note.innerHTML="<b>问题已寄出。</b>命格师会带着你的命格回信 —— 没收到就翻翻垃圾箱。";
+    paintQuota();
+  }).catch(function(e){ note.innerHTML="<b>没送出去:</b>"+esc(e.message||"网络错误")+"。稍后再试。" });
+});
+
+/* ── 分享图 (1080×1920 · 9:16, 手机长按保存) ── */
 $("btnShare").addEventListener("click",function(){
-  if(!chartCache||!gameCache) return;
-  var p=chartCache, g=gameCache, W=1080, H=1520;
+  if(!chartCache||!gameCache||!fateCache) return;
+  var p=chartCache, F=fateCache, W=1080, H=1920;
   var c=document.createElement("canvas"); c.width=W; c.height=H;
   var x=c.getContext("2d");
   var bg=x.createLinearGradient(0,0,0,H);
-  bg.addColorStop(0,"#1E1018"); bg.addColorStop(.45,"#0C0710"); bg.addColorStop(1,"#050308");
+  bg.addColorStop(0,"#0D1017"); bg.addColorStop(.6,"#08090D"); bg.addColorStop(1,"#0D1017");
   x.fillStyle=bg; x.fillRect(0,0,W,H);
-  var rg=x.createRadialGradient(W/2,H*.2,30,W/2,H*.2,660);
-  rg.addColorStop(0,"rgba(150,60,44,.42)"); rg.addColorStop(1,"rgba(150,60,44,0)");
-  x.fillStyle=rg; x.fillRect(0,0,W,H);
-  x.strokeStyle="rgba(233,196,106,.85)"; x.lineWidth=3; x.strokeRect(44,44,W-88,H-88);
-  x.strokeStyle="rgba(233,196,106,.3)";  x.lineWidth=1; x.strokeRect(62,62,W-124,H-124);
-  function serif(sz,w){x.font=(w||700)+" "+sz+"px 'Songti SC','STSong','Noto Serif CJK SC','SimSun',serif"}
-  function sans(sz){x.font=sz+"px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif"}
+  /* 星点: 由命格编号推种 —— 同一命格每次生成同一张图 */
+  var seed=7; for(var si=0;si<F.code.length;si++) seed=(seed*31+F.code.charCodeAt(si))%99991;
+  function rnd(){ seed=(seed*1103515245+12345)%2147483648; return seed/2147483648 }
+  x.fillStyle="rgba(226,222,210,.55)";
+  for(var i=0;i<110;i++){ var sx=rnd()*W, sy=rnd()*H, rr=rnd()*1.7+.3; x.beginPath(); x.arc(sx,sy,rr,0,6.28); x.fill() }
+  x.strokeStyle="rgba(200,169,107,.6)"; x.lineWidth=3; x.strokeRect(44,44,W-88,H-88);
+  x.strokeStyle="rgba(200,169,107,.22)"; x.lineWidth=1; x.strokeRect(62,62,W-124,H-124);
+  function serif(sz,w){ x.font=(w||700)+" "+sz+"px 'Songti SC','STSong','Noto Serif CJK SC','SimSun',serif" }
+  function sans(sz){ x.font=sz+"px 'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif" }
   x.textAlign="center"; x.textBaseline="alphabetic";
-  /* 印 */
-  x.fillStyle="#B4382C"; x.fillRect(W-176,80,96,96);
-  x.strokeStyle="rgba(255,235,210,.7)"; x.lineWidth=2; x.strokeRect(W-166,90,76,76);
-  serif(40); x.fillStyle="#FFEEDD"; x.fillText("天",W-128,130); x.fillText("机",W-128,168);
-  serif(30); x.fillStyle="#E0654C"; x.fillText("修 行 世 界 · 天 机 阁",W/2,150);
-  serif(96); x.fillStyle="#F5E2B4"; x.fillText(g.title,W/2,270);
-  sans(30); x.fillStyle="#D8B36A"; x.fillText(g.position+" · "+g.school+" · 身"+p.wangShuai.shen,W/2,328);
-  /* 四柱 */
-  var cols=["年柱 · 先天","月柱 · 社会","日柱 · 自身","时柱 · 成果"], cw=(W-160)/4;
-  for(var i=0;i<4;i++){
-    var bx=80+cw*i+5, cx=bx+cw/2-5;
-    x.fillStyle="rgba(6,4,10,.62)"; x.fillRect(bx,390,cw-10,250);
-    x.strokeStyle="rgba(216,170,90,.35)"; x.lineWidth=1; x.strokeRect(bx,390,cw-10,250);
-    sans(22); x.fillStyle="#9C8F76"; x.fillText(cols[i],cx,436);
-    serif(54); x.fillStyle="#F5E2B4"; x.fillText(p.gz[i],cx,520);
-    sans(24); x.fillStyle="#E8D6AE"; x.fillText(p.shiShenTg[i],cx,576);
-    sans(19); x.fillStyle="#8D8574"; x.fillText(p.nayin[i],cx,620);
+  /* 朱砂印 */
+  x.fillStyle="#9E3B2E"; x.fillRect(W-176,80,96,96);
+  x.strokeStyle="rgba(255,235,210,.65)"; x.lineWidth=2; x.strokeRect(W-166,90,76,76);
+  serif(40); x.fillStyle="#F5E9D6"; x.fillText("天",W-128,130); x.fillText("机",W-128,168);
+  serif(30); x.fillStyle="#C8A96B"; x.fillText("修行世界 · 天机阁",W/2,150);
+  /* 命格 + 人格原型 */
+  serif(116); x.fillStyle="#F0E6D2"; x.fillText(F.xiang.name,W/2,330);
+  var xe=XELE[F.xiang.name]||["",""];
+  sans(30); x.fillStyle="#C8A96B"; x.fillText(xe[0]+"方之象 · "+xe[1]+"命 · "+F.persona,W/2,386);
+  sans(26); x.fillStyle="#8A8F9C"; x.fillText(F.code+" · "+F.level,W/2,436);
+  sans(26); x.fillStyle="#8A8F9C"; x.fillText("人 格 原 型",W/2,910);
+  serif(72); x.fillStyle="#D8BD7A"; x.fillText(F.persona,W/2,996);
+  sans(30); x.fillStyle="#F0E6D2"; x.fillText(F.keywords.join(" · "),W/2,1052);
+  /* 核心属性(取最高的三个) */
+  var y0=1140;
+  sans(26); x.fillStyle="#8A8F9C"; x.fillText("核 心 属 性",W/2,y0);
+  F.attrList.slice(0,3).forEach(function(a,i){
+    var yy=y0+86+i*96;
+    x.textAlign="left"; serif(46); x.fillStyle="#F0E6D2"; x.fillText(a[0],150,yy);
+    x.fillStyle="rgba(200,169,107,.14)"; x.fillRect(380,yy-32,450,24);
+    x.fillStyle="#C8A96B"; x.fillRect(380,yy-32,450*a[1]/100,24);
+    x.textAlign="right"; sans(40); x.fillStyle="#D8BD7A"; x.fillText(String(a[1]),930,yy);
+    x.textAlign="center";
+  });
+  /* 修行方向 */
+  var dy=1530;
+  sans(26); x.fillStyle="#8A8F9C"; x.fillText("修 行 方 向",W/2,dy);
+  serif(62); x.fillStyle="#F0E6D2"; x.fillText(F.practice.dir,W/2,dy+86);
+  sans(28); x.fillStyle="#C9C3B4"; x.fillText(F.practice.today.slice(0,26),W/2,dy+146);
+  if(F.practice.today.length>26) x.fillText(F.practice.today.slice(26,52),W/2,dy+190);
+  /* 底部品牌 */
+  serif(46); x.fillStyle="#F0E6D2"; x.fillText("天机阁 · 修行世界",W/2,1790);
+  sans(30); x.fillStyle="#C8A96B"; x.fillText("xiuxing-world.beam.page",W/2,1848);
+  sans(22); x.fillStyle="#8A8F9C"; x.fillText("传统文化 × AI 推演 · 仅供自我探索与文化体验",W/2,1896);
+  function emit(){ var url=c.toDataURL("image/png");
+    $("shmImg").src=url; $("shm").classList.add("on");
+    $("shmDl").onclick=function(){ var a=document.createElement("a"); a.href=url; a.download="天机阁·命格英雄卡.png"; document.body.appendChild(a); a.click(); a.remove() };
   }
-  /* 属性面板 */
-  var y0=716;
-  x.textAlign="left"; sans(26); x.fillStyle="#C9BC9C"; x.fillText("属性面板 · 五行强弱",80,y0);
-  g.panel.forEach(function(w,i){
-    var yy=y0+56+i*62;
-    sans(28); x.fillStyle="#E8D6AE"; x.fillText(w.elem,80,yy+8);
-    x.fillStyle="rgba(216,170,90,.14)"; x.fillRect(132,yy-14,770,20);
-    var grd=x.createLinearGradient(132,0,902,0); grd.addColorStop(0,"#B7873E"); grd.addColorStop(1,"#F0D48A");
-    x.fillStyle=grd; x.fillRect(132,yy-14,770*(w.val/5),20);
-    x.textAlign="right"; sans(28); x.fillStyle="#E8D6AE"; x.fillText(String(w.val),1000,yy+8);
-    x.textAlign="left";
-  });
-  /* 概览 */
-  var y=ysShow(p);
-  var facts=[["格局",p.ge],["用神",y.ys],["喜神",y.xs],["忌神",y.js],["起运",p.qiYun],["神煞",p.shenSha.join(" · ")||"—"]];
-  var fy=1118;
-  facts.forEach(function(f,i){
-    var fx=80+(i%2)*470, ry=fy+((i/2)|0)*100;
-    x.fillStyle="rgba(6,4,10,.55)"; x.fillRect(fx,ry,450,86);
-    x.strokeStyle="rgba(216,170,90,.3)"; x.lineWidth=1; x.strokeRect(fx,ry,450,86);
-    sans(23); x.fillStyle="#9C8F76"; x.fillText(f[0],fx+24,ry+36);
-    serif(32); x.fillStyle="#F5E2B4"; x.fillText(String(f[1]),fx+24,ry+74);
-  });
-  sans(25); x.textAlign="center"; x.fillStyle="#8D8574";
-  x.fillText("xiuxing-world.beam.page · 符号推演,供自省与玩味,不构成命定断言",W/2,1452);
-  var url=c.toDataURL("image/png");
-  $("shmImg").src=url; $("shm").classList.add("on");
-  $("shmDl").onclick=function(){
-    var a=document.createElement("a"); a.href=url; a.download="修行世界·命格英雄卡.png";
-    document.body.appendChild(a); a.click(); a.remove();
-  };
+  var svg=totemSVG(F.xiang.name).replace('<svg','<svg xmlns="http://www.w3.org/2000/svg" width="380" height="380"');
+  var img=new Image();
+  img.onload=function(){ try{ x.drawImage(img,W/2-190,470,380,380) }catch(e){} emit() };
+  img.onerror=function(){ emit() };
+  img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
 });
 $("shmClose").addEventListener("click",function(){$("shm").classList.remove("on")});
 $("shm").addEventListener("click",function(e){ if(e.target===this) this.classList.remove("on") });
@@ -1541,7 +1842,7 @@ function launch(payload, mail, note){
   if(window.xx_lock)xx_lock();   /* 机关咔哒锁死 */
   playGen(chart,function(){
     $("load").classList.remove("on");
-    if(chart){ showResult(chart,Paipan.gameFields(chart),payload); if(mail) saveCard(payload); }
+    if(chart){ showResult(chart,Paipan.gameFields(chart),payload); saveCard(payload); }
     else showLocalFail(failMsg);
     /* 收起全部步骤面板: 无论 fit 何时被触发,舞台就都只会得 0 */
     $("next").style.display="none"; $("back").classList.add("hide"); navDone=true; showNav(false);
@@ -1602,7 +1903,44 @@ whenEngine(function autoGo(){
     : '<span class="strong">这是你上次推演的卡</span>'+
       "存在这台设备上,回来直接接着看;没发邮件、不占次数。<br>想重算点「再推一次」,不想留了点「清除存档」。");
 });
+/* ---- 09 · 今日修行: 按当日日干现算, 同一天同结果 ---- */
+whenEngine(function(){
+  try{
+    var n=new Date();
+    var d0=Paipan.paipan({y:n.getFullYear(),m:n.getMonth()+1,d:n.getDate(),hh:12,mm:0,gender:"male",cal:"solar",leap:false,
+      school:{yearBound:"lichun",ziTime:"today",tz:"bjt",lon:120,monthRule:"jieqi"}});
+    var gz2=(d0.gz&&d0.gz[2])||(d0.pillars&&d0.pillars.tg&&d0.pillars.tg[2])||"";
+    var gan=gz2.charAt(0);
+    var ELE={"甲":"木","乙":"木","丙":"火","丁":"火","戊":"土","己":"土","庚":"金","辛":"金","壬":"水","癸":"水"};
+    var TB={"木":{yi:"出门走一段没走过的路",ji:"顶着来,越顶越僵",xf:"遇到阻力先绕一步,把绕过的那条路记下来"},
+            "火":{yi:"把一件拖着的事推一把",ji:"上头争对错",xf:"话出口之前,先数三秒"},
+            "土":{yi:"收拾一处角落,清一件旧账",ji:"原地不动,一天什么都不碰",xf:"定一个固定时间做同一件事,今天先做一次"},
+            "金":{yi:"先把标准定清楚再开始",ji:"抠细节抠到忘了目的",xf:"做完就交,同一处不返工第三次"},
+            "水":{yi:"安静待一会儿,把想说的先放下",ji:"夜里做决定",xf:"情绪上来的那十秒,先停,不回应"}};
+    var e=ELE[gan]||"土", t=TB[e];
+    var el=document.getElementById("todayBox");
+    if(el) el.innerHTML='<div class="tr"><span class="k">今日宜</span><span class="v">'+t.yi+'</span></div>'+
+      '<div class="tr"><span class="k">今日忌</span><span class="v">'+t.ji+'</span></div>'+
+      '<div class="tr"><span class="k">今日修行</span><span class="v">'+t.xf+'</span></div>'+
+      '<div class="tr"><span class="k">当日干支</span><span class="v dimv">'+gz2+' 日主 · '+e+'</span></div>';
+  }catch(e){}
+});
+
+/* ---- ⚙️ 专业排盘设置: 展开 16 种排法(切专业模式并跳到流派步) ---- */
+var toPro=document.getElementById("toPro");
+if(toPro) toPro.addEventListener("click",function(){
+  var r=document.querySelector('input[name="mode"][value="pro"]');
+  if(r){ r.checked=true; applyMode("pro"); }
+  var g=document.querySelector('[data-go="1"]'); if(g) g.click();
+});
+
+/* ---- 08 · AI 命格师入口: 已推演跳结果, 否则先去推演 ---- */
+var btnAI=document.getElementById("btnAI");
+if(btnAI) btnAI.addEventListener("click",function(){
+  var r=document.getElementById("result");
+  if(r && !r.hidden){ scrollTo("#result"); }
+  else { scrollTo("#tjg"); showNav(true); }
+});
 })();
 </script>
 </body>
-</html>
